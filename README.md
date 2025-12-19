@@ -1,11 +1,11 @@
-# 📊 pyRevit Cost Estimates Extension
+#  pyRevit Cost Estimates Extension
 
 Automate quantity takeoffs and cost estimation inside Autodesk Revit with **pyRevit**.  
 This extension reduces manual work by directly populating costs, generating Bills of Quantities (BOQs), and calculating totals from your model.
 
 ---
 
-## ✨ Features
+##  Features
 
 - **Amount Population**: Automatically populate unit cost parameters (e.g., `Test_1234`) based on category.  
 - **Generate BOQ**: Export structured cost breakdowns to Excel.  
@@ -36,7 +36,7 @@ This is where you define composite items by combining materials.
 **Example (Concrete):** cement + quarry dust + crushed stones + water + labor → concrete rate.
 
 Once **recipes** and **material costs** are set, just:
-1) **Cost Update** → 2) **Amount** → 3) **Generate BOQ** ✅
+1) **Cost Update** → 2) **Amount** → 3) **Generate BOQ** 
 
 ## Demo & test files
 
@@ -69,16 +69,16 @@ The extension currently supports BOQ export and cost updates for the following R
 | Wall and Floor Finishes    | m²                  |
 
 
-## 🚀 Installation
+##  Installation
 
 1. Make sure you have **[pyRevit installed](https://github.com/eirannejad/pyRevit/releases)**.  
 2. Download **pyRevit Cost Estimates** from:  
-   👉 https://github.com/SwanaWJ/pyrevit-CostEstimates/archive/refs/heads/main.zip 
+    https://github.com/SwanaWJ/pyrevit-CostEstimates/archive/refs/heads/main.zip 
 3. In Revit, go to the **pyRevit tab** → look at the **left-most panel** → click the small **drop-down arrow** (menu opens).  
 4. Select **Settings** (pyRevit settings window opens).  
 5. Navigate to **Add Folder** → browse to the folder where you downloaded/cloned `pyrevit-CostEstimates`.  
 6. Click **Save Settings** and then **Reload**.  
 
-✅ You should now see a new tab named **PyCostEstimates** in your Revit ribbon.
+ You should now see a new tab named **PyCostEstimates** in your Revit ribbon.
 
 Good lucky!
