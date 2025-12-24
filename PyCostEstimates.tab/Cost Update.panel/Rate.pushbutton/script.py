@@ -10,7 +10,9 @@ csv_folder_path = os.path.join(script_dir, "material_costs")
 csv_recipes_path = os.path.join(script_dir, "recipes.csv")
 
 # --- Load Material Unit-Costs ----------------------------------------
-material_prices, loaded_files = {}, []
+material_prices = {}
+loaded_files = []
+
 if os.path.isdir(csv_folder_path):
     csv_files = [f for f in os.listdir(csv_folder_path) if f.endswith(".csv")]
     if not csv_files:
@@ -36,16 +38,20 @@ try:
     with open(csv_recipes_path, "r") as f:
         for row in csv.DictReader(f):
             try:
-                recipes.setdefault(row["Type"].strip(), {})[row["Component"].strip()] = float(row["Quantity"])
+                recipes.setdefault(row["Type"].strip(), {})[
+                    row["Component"].strip()
+                ] = float(row["Quantity"])
             except (KeyError, ValueError):
                 continue
 except Exception as e:
     forms.alert("Error reading recipes.csv: {}".format(e), title="Recipes Load Error")
 
 # --- Book-keeping -----------------------------------------------------
-updated, skipped = [], []
+updated = []
+skipped = []
 missing_materials = set()
-paint_updated, paint_skipped = [], []
+paint_updated = []
+paint_skipped = []
 
 # --- Try Import RebarBarType ------------------------------------------
 try:
@@ -64,7 +70,12 @@ try:
             for elem in collected:
                 if not elem.Category or elem.Category.Id.IntegerValue != int(enum_value):
                     continue
-                p = elem.get_Parameter(DB.BuiltInParameter.SYMBOL_NAME_PARAM) if name_param                     else elem.get_Parameter(DB.BuiltInParameter.ALL_MODEL_TYPE_NAME)
+
+                p = (
+                    elem.get_Parameter(DB.BuiltInParameter.SYMBOL_NAME_PARAM)
+                    if name_param
+                    else elem.get_Parameter(DB.BuiltInParameter.ALL_MODEL_TYPE_NAME)
+                )
                 if not p:
                     continue
 
@@ -72,7 +83,9 @@ try:
                 if tname not in recipes:
                     continue
 
-                total_cost, valid = 0, True
+                total_cost = 0.0
+                valid = True
+
                 for mat, qty in recipes[tname].items():
                     if mat in material_prices:
                         total_cost += qty * material_prices[mat]
@@ -84,80 +97,166 @@ try:
 
                 if valid:
                     cost_param = elem.LookupParameter("Cost")
-                    if cost_param and cost_param.StorageType == DB.StorageType.Double and not cost_param.IsReadOnly:
+                    if (
+                        cost_param
+                        and cost_param.StorageType == DB.StorageType.Double
+                        and not cost_param.IsReadOnly
+                    ):
                         cost_param.Set(total_cost)
                         updated.append((tname, total_cost))
                     else:
                         skipped.append("{} (no editable 'Cost' parameter)".format(tname))
 
         # ---------- ELEMENT TYPE COST APPLICATION -------------------------
-        apply_cost_to_elements(DB.FilteredElementCollector(revit.doc).OfClass(DB.WallType),              DB.BuiltInCategory.OST_Walls)
-        apply_cost_to_elements(DB.FilteredElementCollector(revit.doc).OfClass(DB.FloorType),             DB.BuiltInCategory.OST_Floors)
-        apply_cost_to_elements(DB.FilteredElementCollector(revit.doc).OfClass(DB.WallFoundationType),    DB.BuiltInCategory.OST_StructuralFoundation)
-        apply_cost_to_elements(DB.FilteredElementCollector(revit.doc).OfClass(DB.FamilySymbol),          DB.BuiltInCategory.OST_StructuralFraming)
-        apply_cost_to_elements(DB.FilteredElementCollector(revit.doc).OfClass(DB.FamilySymbol),          DB.BuiltInCategory.OST_GenericModel)
-        apply_cost_to_elements(DB.FilteredElementCollector(revit.doc).OfClass(DB.RoofType),              DB.BuiltInCategory.OST_Roofs)
-        apply_cost_to_elements(DB.FilteredElementCollector(revit.doc).OfClass(DB.CeilingType),           DB.BuiltInCategory.OST_Ceilings)
-        apply_cost_to_elements(DB.FilteredElementCollector(revit.doc).OfClass(DB.FamilySymbol),          DB.BuiltInCategory.OST_StructuralColumns)
-        apply_cost_to_elements(DB.FilteredElementCollector(revit.doc).OfClass(DB.FamilySymbol),          DB.BuiltInCategory.OST_Doors)
-        apply_cost_to_elements(DB.FilteredElementCollector(revit.doc).OfClass(DB.FamilySymbol),          DB.BuiltInCategory.OST_Windows)
+        apply_cost_to_elements(DB.FilteredElementCollector(revit.doc).OfClass(DB.WallType),
+                               DB.BuiltInCategory.OST_Walls)
+        apply_cost_to_elements(DB.FilteredElementCollector(revit.doc).OfClass(DB.FloorType),
+                               DB.BuiltInCategory.OST_Floors)
+        apply_cost_to_elements(DB.FilteredElementCollector(revit.doc).OfClass(DB.WallFoundationType),
+                               DB.BuiltInCategory.OST_StructuralFoundation)
+        apply_cost_to_elements(DB.FilteredElementCollector(revit.doc).OfClass(DB.FamilySymbol),
+                               DB.BuiltInCategory.OST_StructuralFraming)
+        apply_cost_to_elements(DB.FilteredElementCollector(revit.doc).OfClass(DB.FamilySymbol),
+                               DB.BuiltInCategory.OST_GenericModel)
+        apply_cost_to_elements(DB.FilteredElementCollector(revit.doc).OfClass(DB.RoofType),
+                               DB.BuiltInCategory.OST_Roofs)
+        apply_cost_to_elements(DB.FilteredElementCollector(revit.doc).OfClass(DB.CeilingType),
+                               DB.BuiltInCategory.OST_Ceilings)
+        apply_cost_to_elements(DB.FilteredElementCollector(revit.doc).OfClass(DB.FamilySymbol),
+                               DB.BuiltInCategory.OST_StructuralColumns)
+        apply_cost_to_elements(DB.FilteredElementCollector(revit.doc).OfClass(DB.FamilySymbol),
+                               DB.BuiltInCategory.OST_Doors)
+        apply_cost_to_elements(DB.FilteredElementCollector(revit.doc).OfClass(DB.FamilySymbol),
+                               DB.BuiltInCategory.OST_Windows)
 
         if rebar_type_class:
-            apply_cost_to_elements(DB.FilteredElementCollector(revit.doc).OfClass(rebar_type_class), DB.BuiltInCategory.OST_Rebar, name_param=False)
+            apply_cost_to_elements(
+                DB.FilteredElementCollector(revit.doc).OfClass(rebar_type_class),
+                DB.BuiltInCategory.OST_Rebar,
+                name_param=False
+            )
 
         # Electrical
-        apply_cost_to_elements(DB.FilteredElementCollector(revit.doc).OfCategory(DB.BuiltInCategory.OST_Conduit).WhereElementIsElementType(),           DB.BuiltInCategory.OST_Conduit)
-        apply_cost_to_elements(DB.FilteredElementCollector(revit.doc).OfCategory(DB.BuiltInCategory.OST_LightingDevices).WhereElementIsElementType(),   DB.BuiltInCategory.OST_LightingDevices)
-        apply_cost_to_elements(DB.FilteredElementCollector(revit.doc).OfCategory(DB.BuiltInCategory.OST_LightingFixtures).WhereElementIsElementType(),  DB.BuiltInCategory.OST_LightingFixtures)
-        apply_cost_to_elements(DB.FilteredElementCollector(revit.doc).OfCategory(DB.BuiltInCategory.OST_ElectricalFixtures).WhereElementIsElementType(),DB.BuiltInCategory.OST_ElectricalFixtures)
-        apply_cost_to_elements(DB.FilteredElementCollector(revit.doc).OfCategory(DB.BuiltInCategory.OST_ElectricalEquipment).WhereElementIsElementType(),DB.BuiltInCategory.OST_ElectricalEquipment)
+        apply_cost_to_elements(
+            DB.FilteredElementCollector(revit.doc)
+            .OfCategory(DB.BuiltInCategory.OST_Conduit)
+            .WhereElementIsElementType(),
+            DB.BuiltInCategory.OST_Conduit
+        )
+
+        apply_cost_to_elements(
+            DB.FilteredElementCollector(revit.doc)
+            .OfCategory(DB.BuiltInCategory.OST_LightingDevices)
+            .WhereElementIsElementType(),
+            DB.BuiltInCategory.OST_LightingDevices
+        )
+
+        apply_cost_to_elements(
+            DB.FilteredElementCollector(revit.doc)
+            .OfCategory(DB.BuiltInCategory.OST_LightingFixtures)
+            .WhereElementIsElementType(),
+            DB.BuiltInCategory.OST_LightingFixtures
+        )
+
+        apply_cost_to_elements(
+            DB.FilteredElementCollector(revit.doc)
+            .OfCategory(DB.BuiltInCategory.OST_ElectricalFixtures)
+            .WhereElementIsElementType(),
+            DB.BuiltInCategory.OST_ElectricalFixtures
+        )
+
+        apply_cost_to_elements(
+            DB.FilteredElementCollector(revit.doc)
+            .OfCategory(DB.BuiltInCategory.OST_ElectricalEquipment)
+            .WhereElementIsElementType(),
+            DB.BuiltInCategory.OST_ElectricalEquipment
+        )
 
         # Plumbing
-        apply_cost_to_elements(DB.FilteredElementCollector(revit.doc).OfClass(DB.FamilySymbol),          DB.BuiltInCategory.OST_PlumbingFixtures)
-        apply_cost_to_elements(DB.FilteredElementCollector(revit.doc).OfCategory(DB.BuiltInCategory.OST_PipeCurves).WhereElementIsElementType(),        DB.BuiltInCategory.OST_PipeCurves)
-        apply_cost_to_elements(DB.FilteredElementCollector(revit.doc).OfCategory(DB.BuiltInCategory.OST_PipeFitting).WhereElementIsElementType(),       DB.BuiltInCategory.OST_PipeFitting)
-        apply_cost_to_elements(DB.FilteredElementCollector(revit.doc).OfCategory(DB.BuiltInCategory.OST_PipeAccessory).WhereElementIsElementType(),     DB.BuiltInCategory.OST_PipeAccessory)
+        apply_cost_to_elements(DB.FilteredElementCollector(revit.doc).OfClass(DB.FamilySymbol),
+                               DB.BuiltInCategory.OST_PlumbingFixtures)
+
+        apply_cost_to_elements(
+            DB.FilteredElementCollector(revit.doc)
+            .OfCategory(DB.BuiltInCategory.OST_PipeCurves)
+            .WhereElementIsElementType(),
+            DB.BuiltInCategory.OST_PipeCurves
+        )
+
+        apply_cost_to_elements(
+            DB.FilteredElementCollector(revit.doc)
+            .OfCategory(DB.BuiltInCategory.OST_PipeFitting)
+            .WhereElementIsElementType(),
+            DB.BuiltInCategory.OST_PipeFitting
+        )
+
+        apply_cost_to_elements(
+            DB.FilteredElementCollector(revit.doc)
+            .OfCategory(DB.BuiltInCategory.OST_PipeAccessory)
+            .WhereElementIsElementType(),
+            DB.BuiltInCategory.OST_PipeAccessory
+        )
 
         # Paint / Finishes
-        for mat in DB.FilteredElementCollector(revit.doc).OfClass(DB.Material).ToElements():
+        for mat in DB.FilteredElementCollector(revit.doc).OfClass(DB.Material):
             mat_name = mat.Name.strip()
             if mat_name in material_prices:
                 cost_param = mat.LookupParameter("Cost")
-                if cost_param and cost_param.StorageType == DB.StorageType.Double and not cost_param.IsReadOnly:
+                if (
+                    cost_param
+                    and cost_param.StorageType == DB.StorageType.Double
+                    and not cost_param.IsReadOnly
+                ):
                     cost_param.Set(material_prices[mat_name])
                     paint_updated.append((mat_name, material_prices[mat_name]))
                 else:
                     paint_skipped.append(mat_name)
 
-except Exception as e:
-    forms.alert("Script crashed with error:\n{}".format(traceback.format_exc()), title="Crash in Transaction")
+except Exception:
+    forms.alert(
+        "Script crashed with error:\n{}".format(traceback.format_exc()),
+        title="Crash in Transaction"
+    )
 
-# ===================== SUMMARY ========================================
+# ===================== SUMMARY (SAFE SORTED) ==========================
 summary = []
 
-if updated:
-    summary.append("✅ Updated Type Costs:")
-    summary.extend(["- {} : {:.2f} ZMW".format(n, c) for n, c in updated])
+updated_sorted = sorted(updated)
+paint_updated_sorted = sorted(paint_updated)
+skipped_sorted = sorted(skipped)
+paint_skipped_sorted = sorted(paint_skipped)
+missing_materials_sorted = sorted(missing_materials)
+loaded_files_sorted = sorted(loaded_files)
 
-if paint_updated:
-    summary.append("\n🎨 Updated Paint / Finish Materials:")
-    summary.extend(["- {} : {:.2f} ZMW/m²".format(n, c) for n, c in paint_updated])
+if updated_sorted:
+    summary.append("Updated Type Costs:")
+    for n, c in updated_sorted:
+        summary.append("- {} : {:.2f} ZMW".format(n, c))
 
-if skipped:
-    summary.append("\n⚠️ Skipped Types:")
-    summary.extend(["- " + s for s in skipped])
+if paint_updated_sorted:
+    summary.append("\nUpdated Paint / Finish Materials:")
+    for n, c in paint_updated_sorted:
+        summary.append("- {} : {:.2f} ZMW/m²".format(n, c))
 
-if paint_skipped:
-    summary.append("\n⚠️ Skipped Materials (no editable Cost param):")
-    summary.extend(["- " + n for n in paint_skipped])
+if skipped_sorted:
+    summary.append("\nSkipped Types:")
+    for s in skipped_sorted:
+        summary.append("- " + s)
 
-if missing_materials:
-    summary.append("\n❗ Missing materials not priced in CSVs:")
-    summary.extend(sorted(missing_materials))
+if paint_skipped_sorted:
+    summary.append("\nSkipped Materials (no editable Cost param):")
+    for n in paint_skipped_sorted:
+        summary.append("- " + n)
 
-if loaded_files:
-    summary.append("\n📂 CSVs loaded:")
-    summary.extend(["- " + f for f in loaded_files])
+if missing_materials_sorted:
+    summary.append("\nMissing materials not priced in CSVs:")
+    for m in missing_materials_sorted:
+        summary.append("- " + m)
+
+if loaded_files_sorted:
+    summary.append("\nCSVs loaded:")
+    for f in loaded_files_sorted:
+        summary.append("- " + f)
 
 if not summary:
     summary = ["No matching types or materials found."]
