@@ -262,3 +262,4 @@ if not summary:
     summary = ["No matching types or materials found."]
 
 forms.alert("\n".join(summary), title="Composite & Paint Cost Update")
+#Improve cost update popup by sorting item names alphabetically
