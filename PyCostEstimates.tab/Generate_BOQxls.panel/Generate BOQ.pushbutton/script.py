@@ -1794,7 +1794,7 @@ summary_ws.merge_range(0, 0, 0, 3, "GENERAL SUMMARY", fmt_center)
 summary_ws.write(1, 0, "ITEM", fmt_header)
 summary_ws.write(1, 1, "DESCRIPTION", fmt_header)
 summary_ws.write(1, 2, "", fmt_header)
-summary_ws.write(1, 3, "AMOUNT (ZMW)", fmt_header)
+summary_ws.write(1, 3, "AMOUNT (EUR)", fmt_header)
 
 row = 2
 summary_ws.merge_range(
@@ -1805,7 +1805,7 @@ summary_ws.merge_range(
 )
 row += 2
 
-CURRENCY_SYM = "K"
+CURRENCY_SYM = "€"
 
 for idx, (bill_name, ref) in enumerate(
     zip(ORDERED_BILLS, bill_grand_refs),
