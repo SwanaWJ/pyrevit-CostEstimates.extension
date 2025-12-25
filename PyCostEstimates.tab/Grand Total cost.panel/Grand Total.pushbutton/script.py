@@ -1,42 +1,53 @@
 # -*- coding: utf-8 -*-
-from pyrevit import revit, DB, forms
-from collections import defaultdict
+import clr
+import datetime
 
-# --- Settings ---
-PARAM_NAME = "Test_1234"
+clr.AddReference("PresentationFramework")
+clr.AddReference("PresentationCore")
+clr.AddReference("WindowsBase")
+
+from System.Windows import Window
+from pyrevit import revit, DB
+
 doc = revit.doc
 
-# --- Initialize collectors ---
-elements = DB.FilteredElementCollector(doc)\
-    .WhereElementIsNotElementType()\
-    .ToElements()
 
-category_totals = defaultdict(float)
-category_counts = defaultdict(int)
-grand_total = 0.0
-total_count = 0
+class GrandTotalWindow(Window):
+    def __init__(self):
+        xaml_path = __file__.replace("script.py", "ui.xaml")
+        clr.AddReference("IronPython.Wpf")
+        import wpf
+        wpf.LoadComponent(self, xaml_path)
 
-# --- Process elements ---
-for elem in elements:
-    try:
-        param = elem.LookupParameter(PARAM_NAME)
-        if param and param.HasValue and param.StorageType == DB.StorageType.Double:
-            value = param.AsDouble()
-            if value > 0:
-                cat_name = elem.Category.Name if elem.Category else "Uncategorized"
-                category_totals[cat_name] += value
-                category_counts[cat_name] += 1
-                grand_total += value
-                total_count += 1
-    except:
-        continue
+        self.update_total()
 
-# --- Build message ---
-message = "**Total of Test_1234 across {} elements:**\n\n".format(total_count)
-message += "ZAR {:.2f}\n\n".format(grand_total)
-message += "**Category Breakdown:**\n"
-for cat in sorted(category_totals.keys()):
-    message += "- {} ({}): ZAR {:.2f}\n".format(cat, category_counts[cat], category_totals[cat])
+    def update_total(self):
+        total = 0.0
 
-# --- Show popup ---
-forms.alert(message, title="Test_1234 Totals by Category", warn_icon=True)
+        # Sum COST parameter of all element TYPES
+        collector = DB.FilteredElementCollector(doc).WhereElementIsElementType()
+        for elem in collector:
+            p = elem.LookupParameter("Cost")
+            if p and not p.IsReadOnly:
+                try:
+                    total += p.AsDouble()
+                except:
+                    pass
+
+        self.TotalText.Text = "ZMW {:,.2f}".format(total)
+        self.UpdatedText.Text = "Last updated: {}".format(
+            datetime.datetime.now().strftime("%H:%M:%S")
+        )
+
+    def OnRefresh(self, sender, args):
+        self.update_total()
+
+    def OnClose(self, sender, args):
+        self.Close()
+
+
+# ---------------------------------------------------------------------
+# Launch modeless window
+# ---------------------------------------------------------------------
+win = GrandTotalWindow()
+win.Show()
