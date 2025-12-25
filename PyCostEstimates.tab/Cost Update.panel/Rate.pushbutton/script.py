@@ -31,7 +31,7 @@ for fname in os.listdir(csv_folder):
     loaded_files.append(fname)
 
 # ---------------------------------------------------------------------
-# Load recipes (materials + % labour + fixed labour)
+# Load recipes (materials + labour + transport)
 # ---------------------------------------------------------------------
 recipes = {}
 
@@ -42,25 +42,33 @@ with open(recipes_csv, "r") as f:
             comp = row["Component"].strip()
             qty = float(row["Quantity"]) if row["Quantity"] else 0.0
 
-            labour_pct = row.get("Labour", "").strip()
-            labour_fixed = row.get("Labour_Fixed", "").strip()
+            pct = row.get("Labour", "").strip()        # reused for %
+            fixed = row.get("Labour_Fixed", "").strip()
 
             recipes.setdefault(rtype, {
                 "materials": {},
                 "labour_percent": 0.0,
-                "labour_fixed": []
+                "labour_fixed": [],
+                "transport_percent": 0.0,
+                "transport_fixed": []
             })
 
-            # Percentage labour
-            if labour_pct:
-                labour_pct = labour_pct.replace("%", "")
-                recipes[rtype]["labour_percent"] = float(labour_pct) / 100.0
+            # Percentage rows
+            if pct:
+                pct_val = float(pct.replace("%", "")) / 100.0
+                if comp.lower().startswith("transport"):
+                    recipes[rtype]["transport_percent"] = pct_val
+                else:
+                    recipes[rtype]["labour_percent"] = pct_val
 
-            # Fixed labour
-            elif labour_fixed:
-                recipes[rtype]["labour_fixed"].append(float(labour_fixed))
+            # Fixed rows
+            elif fixed:
+                if comp.lower().startswith("transport"):
+                    recipes[rtype]["transport_fixed"].append(float(fixed))
+                else:
+                    recipes[rtype]["labour_fixed"].append(float(fixed))
 
-            # Material
+            # Material rows
             else:
                 recipes[rtype]["materials"][comp] = qty
 
@@ -114,12 +122,13 @@ skipped = {}
 missing_materials = set()
 paint_updated = {}
 labour_applied = {}
+transport_applied = {}
 
 # ---------------------------------------------------------------------
 # TRANSACTION
 # ---------------------------------------------------------------------
 try:
-    with revit.Transaction("Update Composite & Paint Costs (With Labour)"):
+    with revit.Transaction("Update Composite & Paint Costs (Labour + Transport)"):
 
         for elem in type_elements:
             cost_param = elem.LookupParameter("Cost")
@@ -135,11 +144,10 @@ try:
                 continue
 
             material_total = 0.0
-            labour_percent = recipes[tname]["labour_percent"]
-            labour_fixed_total = sum(recipes[tname]["labour_fixed"])
-            valid = True
+            r = recipes[tname]
 
-            for mat, qty in recipes[tname]["materials"].items():
+            valid = True
+            for mat, qty in r["materials"].items():
                 if mat not in material_prices:
                     missing_materials.add(mat)
                     skipped[tname] = "missing material: {}".format(mat)
@@ -150,12 +158,15 @@ try:
             if not valid:
                 continue
 
-            labour_cost = (material_total * labour_percent) + labour_fixed_total
-            total_cost = material_total + labour_cost
+            labour_cost = (material_total * r["labour_percent"]) + sum(r["labour_fixed"])
+            transport_cost = (material_total * r["transport_percent"]) + sum(r["transport_fixed"])
+
+            total_cost = material_total + labour_cost + transport_cost
 
             cost_param.Set(total_cost)
             updated[tname] = total_cost
             labour_applied[tname] = labour_cost > 0
+            transport_applied[tname] = transport_cost > 0
 
         # Paint / finishes
         for mat in materials:
@@ -175,9 +186,14 @@ except Exception:
 summary = []
 
 if updated:
-    summary.append("UPDATED TYPE COSTS (INCL. LABOUR):")
+    summary.append("UPDATED TYPE COSTS (INCL. LABOUR & TRANSPORT):")
     for name in sorted(updated):
-        label = " ⚠️ Labour Inc." if labour_applied.get(name) else ""
+        labels = []
+        if labour_applied.get(name):
+            labels.append("⚠️ Labour Inc.")
+        if transport_applied.get(name):
+            labels.append("🚚 Transpt Inc.")
+        label = "  " + "  ".join(labels) if labels else ""
         summary.append("- {} : {:.2f} ZMW{}".format(name, updated[name], label))
 
 if paint_updated:
