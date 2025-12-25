@@ -8,23 +8,22 @@ clr.AddReference("WindowsBase")
 
 from System.Windows import Window
 from pyrevit import revit, DB
+from Autodesk.Revit.UI import IExternalEventHandler, ExternalEvent
 
 doc = revit.doc
 
 
-class GrandTotalWindow(Window):
-    def __init__(self):
-        xaml_path = __file__.replace("script.py", "ui.xaml")
-        clr.AddReference("IronPython.Wpf")
-        import wpf
-        wpf.LoadComponent(self, xaml_path)
+# ---------------------------------------------------------------------
+# External Event Handler (SAFE Revit API access)
+# ---------------------------------------------------------------------
+class RefreshTotalHandler(IExternalEventHandler):
+    def __init__(self, window):
+        self.window = window
 
-        self.update_total()
-
-    def update_total(self):
+    def Execute(self, uiapp):
         total = 0.0
+        doc = uiapp.ActiveUIDocument.Document
 
-        # Sum COST parameter of all element TYPES
         collector = DB.FilteredElementCollector(doc).WhereElementIsElementType()
         for elem in collector:
             p = elem.LookupParameter("Cost")
@@ -34,20 +33,40 @@ class GrandTotalWindow(Window):
                 except:
                     pass
 
-        self.TotalText.Text = "ZMW {:,.2f}".format(total)
-        self.UpdatedText.Text = "Last updated: {}".format(
+        self.window.TotalText.Text = "ZMW {:,.2f}".format(total)
+        self.window.UpdatedText.Text = "Last updated: {}".format(
             datetime.datetime.now().strftime("%H:%M:%S")
         )
 
+    def GetName(self):
+        return "Refresh Grand Total"
+
+
+# ---------------------------------------------------------------------
+# Modeless Window
+# ---------------------------------------------------------------------
+class GrandTotalWindow(Window):
+    def __init__(self):
+        xaml_path = __file__.replace("script.py", "ui.xaml")
+        clr.AddReference("IronPython.Wpf")
+        import wpf
+        wpf.LoadComponent(self, xaml_path)
+
+        self.handler = RefreshTotalHandler(self)
+        self.ex_event = ExternalEvent.Create(self.handler)
+
+        # Initial populate
+        self.ex_event.Raise()
+
     def OnRefresh(self, sender, args):
-        self.update_total()
+        self.ex_event.Raise()
 
     def OnClose(self, sender, args):
         self.Close()
 
 
 # ---------------------------------------------------------------------
-# Launch modeless window
+# Launch window
 # ---------------------------------------------------------------------
 win = GrandTotalWindow()
 win.Show()
