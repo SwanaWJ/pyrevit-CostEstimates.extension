@@ -170,7 +170,7 @@ summary = []
 if updated:
     summary.append("UPDATED TYPE COSTS (INCL. LABOUR):")
     for name in sorted(updated):
-        label = " > Labour Inc." if labour_applied.get(name) else ""
+        label = " ⚠️ Labour Inc." if labour_applied.get(name) else ""
         summary.append("- {} : {:.2f} ZMW{}".format(name, updated[name], label))
 
 if paint_updated:
