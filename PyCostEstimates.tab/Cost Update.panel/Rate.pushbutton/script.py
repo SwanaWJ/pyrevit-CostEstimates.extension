@@ -42,8 +42,8 @@ with open(recipes_csv, "r") as f:
             comp = row["Component"].strip()
             qty = float(row["Quantity"]) if row["Quantity"] else 0.0
 
-            pct = row.get("Labour", "").strip()        # reused for %
-            fixed = row.get("Labour_Fixed", "").strip()
+            pct = row.get("Labour/Transport", "").strip()
+            fixed = row.get("Labour/Transport_Fixed", "").strip()
 
             recipes.setdefault(rtype, {
                 "materials": {},
