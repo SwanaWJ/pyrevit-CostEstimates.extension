@@ -68,14 +68,17 @@ CATEGORIES = [
     DB.BuiltInCategory.OST_Ceilings,
     DB.BuiltInCategory.OST_Doors,
     DB.BuiltInCategory.OST_Windows,
+
     DB.BuiltInCategory.OST_StructuralColumns,
     DB.BuiltInCategory.OST_StructuralFraming,
     DB.BuiltInCategory.OST_StructuralFoundation,
+
     DB.BuiltInCategory.OST_Conduit,
     DB.BuiltInCategory.OST_ElectricalFixtures,
     DB.BuiltInCategory.OST_ElectricalEquipment,
     DB.BuiltInCategory.OST_LightingFixtures,
     DB.BuiltInCategory.OST_LightingDevices,
+
     DB.BuiltInCategory.OST_PlumbingFixtures,
     DB.BuiltInCategory.OST_PipeCurves,
     DB.BuiltInCategory.OST_PipeFitting,
@@ -104,6 +107,7 @@ updated = {}
 skipped = {}
 missing_materials = set()
 paint_updated = {}
+labour_applied = {}   # <<< NEW (tracking only)
 
 # ---------------------------------------------------------------------
 # TRANSACTION
@@ -144,6 +148,7 @@ try:
 
             cost_param.Set(total_cost)
             updated[tname] = total_cost
+            labour_applied[tname] = labour_percent > 0   # <<< NEW
 
         # Paint / finishes
         for mat in materials:
@@ -158,14 +163,15 @@ except Exception:
     raise
 
 # ---------------------------------------------------------------------
-# SUMMARY
+# SUMMARY (Labour indicated)
 # ---------------------------------------------------------------------
 summary = []
 
 if updated:
     summary.append("UPDATED TYPE COSTS (INCL. LABOUR):")
     for name in sorted(updated):
-        summary.append("- {} : {:.2f} ZMW".format(name, updated[name]))
+        label = " > Labour Inc." if labour_applied.get(name) else ""
+        summary.append("- {} : {:.2f} ZMW{}".format(name, updated[name], label))
 
 if paint_updated:
     summary.append("\nUPDATED PAINT / FINISH MATERIALS:")
