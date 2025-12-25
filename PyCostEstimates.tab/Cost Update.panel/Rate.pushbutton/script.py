@@ -44,16 +44,20 @@ with open(recipes_csv, "r") as f:
 
             pct = row.get("Labour/Transport", "").strip()
             fixed = row.get("Labour/Transport_Fixed", "").strip()
+            time_dist = row.get("Time/Distance", "").strip()
+            rate = row.get("Rate", "").strip()
 
             recipes.setdefault(rtype, {
                 "materials": {},
                 "labour_percent": 0.0,
                 "labour_fixed": [],
+                "labour_time": [],
                 "transport_percent": 0.0,
-                "transport_fixed": []
+                "transport_fixed": [],
+                "transport_distance": []
             })
 
-            # Percentage rows
+            # Percentage-based
             if pct:
                 pct_val = float(pct.replace("%", "")) / 100.0
                 if comp.lower().startswith("transport"):
@@ -61,14 +65,22 @@ with open(recipes_csv, "r") as f:
                 else:
                     recipes[rtype]["labour_percent"] = pct_val
 
-            # Fixed rows
+            # Fixed
             elif fixed:
                 if comp.lower().startswith("transport"):
                     recipes[rtype]["transport_fixed"].append(float(fixed))
                 else:
                     recipes[rtype]["labour_fixed"].append(float(fixed))
 
-            # Material rows
+            # Time / Distance based
+            elif time_dist and rate:
+                cost = float(time_dist) * float(rate)
+                if comp.lower().startswith("transport"):
+                    recipes[rtype]["transport_distance"].append(cost)
+                else:
+                    recipes[rtype]["labour_time"].append(cost)
+
+            # Materials
             else:
                 recipes[rtype]["materials"][comp] = qty
 
@@ -143,10 +155,10 @@ try:
             if not tname or tname not in recipes:
                 continue
 
-            material_total = 0.0
             r = recipes[tname]
-
+            material_total = 0.0
             valid = True
+
             for mat, qty in r["materials"].items():
                 if mat not in material_prices:
                     missing_materials.add(mat)
@@ -158,8 +170,17 @@ try:
             if not valid:
                 continue
 
-            labour_cost = (material_total * r["labour_percent"]) + sum(r["labour_fixed"])
-            transport_cost = (material_total * r["transport_percent"]) + sum(r["transport_fixed"])
+            labour_cost = (
+                material_total * r["labour_percent"]
+                + sum(r["labour_fixed"])
+                + sum(r["labour_time"])
+            )
+
+            transport_cost = (
+                material_total * r["transport_percent"]
+                + sum(r["transport_fixed"])
+                + sum(r["transport_distance"])
+            )
 
             total_cost = material_total + labour_cost + transport_cost
 
