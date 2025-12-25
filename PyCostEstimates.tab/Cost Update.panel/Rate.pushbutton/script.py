@@ -31,7 +31,7 @@ for fname in os.listdir(csv_folder):
     loaded_files.append(fname)
 
 # ---------------------------------------------------------------------
-# Load recipes (materials + labour %)
+# Load recipes (materials + % labour + fixed labour)
 # ---------------------------------------------------------------------
 recipes = {}
 
@@ -41,17 +41,26 @@ with open(recipes_csv, "r") as f:
             rtype = row["Type"].strip()
             comp = row["Component"].strip()
             qty = float(row["Quantity"]) if row["Quantity"] else 0.0
-            labour_val = row.get("Labour", "").strip()
+
+            labour_pct = row.get("Labour", "").strip()
+            labour_fixed = row.get("Labour_Fixed", "").strip()
 
             recipes.setdefault(rtype, {
                 "materials": {},
-                "labour_percent": 0.0
+                "labour_percent": 0.0,
+                "labour_fixed": []
             })
 
-            # Labour row
-            if labour_val:
-                labour_val = labour_val.replace("%", "")
-                recipes[rtype]["labour_percent"] = float(labour_val) / 100.0
+            # Percentage labour
+            if labour_pct:
+                labour_pct = labour_pct.replace("%", "")
+                recipes[rtype]["labour_percent"] = float(labour_pct) / 100.0
+
+            # Fixed labour
+            elif labour_fixed:
+                recipes[rtype]["labour_fixed"].append(float(labour_fixed))
+
+            # Material
             else:
                 recipes[rtype]["materials"][comp] = qty
 
@@ -68,17 +77,14 @@ CATEGORIES = [
     DB.BuiltInCategory.OST_Ceilings,
     DB.BuiltInCategory.OST_Doors,
     DB.BuiltInCategory.OST_Windows,
-
     DB.BuiltInCategory.OST_StructuralColumns,
     DB.BuiltInCategory.OST_StructuralFraming,
     DB.BuiltInCategory.OST_StructuralFoundation,
-
     DB.BuiltInCategory.OST_Conduit,
     DB.BuiltInCategory.OST_ElectricalFixtures,
     DB.BuiltInCategory.OST_ElectricalEquipment,
     DB.BuiltInCategory.OST_LightingFixtures,
     DB.BuiltInCategory.OST_LightingDevices,
-
     DB.BuiltInCategory.OST_PlumbingFixtures,
     DB.BuiltInCategory.OST_PipeCurves,
     DB.BuiltInCategory.OST_PipeFitting,
@@ -107,7 +113,7 @@ updated = {}
 skipped = {}
 missing_materials = set()
 paint_updated = {}
-labour_applied = {}   # <<< NEW (tracking only)
+labour_applied = {}
 
 # ---------------------------------------------------------------------
 # TRANSACTION
@@ -130,6 +136,7 @@ try:
 
             material_total = 0.0
             labour_percent = recipes[tname]["labour_percent"]
+            labour_fixed_total = sum(recipes[tname]["labour_fixed"])
             valid = True
 
             for mat, qty in recipes[tname]["materials"].items():
@@ -143,12 +150,12 @@ try:
             if not valid:
                 continue
 
-            labour_cost = material_total * labour_percent
+            labour_cost = (material_total * labour_percent) + labour_fixed_total
             total_cost = material_total + labour_cost
 
             cost_param.Set(total_cost)
             updated[tname] = total_cost
-            labour_applied[tname] = labour_percent > 0   # <<< NEW
+            labour_applied[tname] = labour_cost > 0
 
         # Paint / finishes
         for mat in materials:
@@ -163,7 +170,7 @@ except Exception:
     raise
 
 # ---------------------------------------------------------------------
-# SUMMARY (Labour indicated)
+# SUMMARY
 # ---------------------------------------------------------------------
 summary = []
 
