@@ -67,12 +67,9 @@ with open(recipes_csv, "r") as f:
 
             cname = comp.lower()
 
-            # ---------------------------
             # Percentage-based
-            # ---------------------------
             if pct:
                 pct_val = float(pct.replace("%", "")) / 100.0
-
                 if "wastage" in cname or "shrinkage" in cname:
                     recipes[rtype]["wastage_percent"] = pct_val
                 elif cname.startswith("transport"):
@@ -82,9 +79,7 @@ with open(recipes_csv, "r") as f:
                 else:
                     recipes[rtype]["labour_percent"] = pct_val
 
-            # ---------------------------
             # Fixed
-            # ---------------------------
             elif fixed:
                 if cname.startswith("transport"):
                     recipes[rtype]["transport_fixed"].append(float(fixed))
@@ -93,12 +88,9 @@ with open(recipes_csv, "r") as f:
                 else:
                     recipes[rtype]["labour_fixed"].append(float(fixed))
 
-            # ---------------------------
             # Time / Distance based
-            # ---------------------------
             elif time_dist and rate:
                 cost = float(time_dist) * float(rate)
-
                 if cname.startswith("transport"):
                     recipes[rtype]["transport_distance"].append(cost)
                 elif "plant" in cname:
@@ -106,9 +98,7 @@ with open(recipes_csv, "r") as f:
                 else:
                     recipes[rtype]["labour_time"].append(cost)
 
-            # ---------------------------
             # Materials
-            # ---------------------------
             else:
                 recipes[rtype]["materials"][comp] = qty
 
@@ -271,7 +261,9 @@ if updated:
         if wastage_applied.get(name):
             labels.append("♻️ Wastage Inc.")
 
-        label = "  " + "  ".join(labels) if labels else ""
+        # 🔧 FIX: use commas to avoid line wrapping
+        label = "  " + ", ".join(labels) if labels else ""
+
         summary.append(
             "- {} : {:.2f} ZMW{}".format(name, updated[name], label)
         )
