@@ -31,7 +31,7 @@ for fname in os.listdir(csv_folder):
     loaded_files.append(fname)
 
 # ---------------------------------------------------------------------
-# Load recipes (materials + labour + transport + wastage + plant)
+# Load recipes (materials + labour + transport + wastage + plant + profit)
 # ---------------------------------------------------------------------
 recipes = {}
 
@@ -42,7 +42,9 @@ with open(recipes_csv, "r") as f:
             comp = row["Component"].strip()
             qty = float(row["Quantity"]) if row["Quantity"] else 0.0
 
-            pct = row.get("Labour/Transport/Wastage", "").strip()
+            # 🔹 RENAMED COLUMN (INTENTIONAL)
+            pct = row.get("Labour/Transport/Wastage/Profit", "").strip()
+
             fixed = row.get("Labour/Transport_Fixed", "").strip()
             time_dist = row.get("Time/Distance", "").strip()
             rate = row.get("Rate", "").strip()
@@ -63,6 +65,8 @@ with open(recipes_csv, "r") as f:
                 "plant_percent": 0.0,
                 "plant_fixed": [],
                 "plant_time": [],
+
+                "overhead_percent": 0.0,   # 🔹 NEW
             })
 
             cname = comp.lower()
@@ -72,8 +76,11 @@ with open(recipes_csv, "r") as f:
             # -----------------------------
             if pct:
                 pct_val = float(pct.replace("%", "")) / 100.0
+
                 if "wastage" in cname or "shrinkage" in cname:
                     recipes[rtype]["wastage_percent"] = pct_val
+                elif "profit" in cname or "overhead" in cname:
+                    recipes[rtype]["overhead_percent"] = pct_val
                 elif cname.startswith("transport"):
                     recipes[rtype]["transport_percent"] = pct_val
                 elif "plant" in cname:
@@ -164,13 +171,14 @@ labour_applied = {}
 transport_applied = {}
 plant_applied = {}
 wastage_applied = {}
+overhead_applied = {}  # 🔹 NEW
 
 # ---------------------------------------------------------------------
 # TRANSACTION
 # ---------------------------------------------------------------------
 try:
     with revit.Transaction(
-        "Update Composite & Paint Costs (Labour + Transport + Wastage + Plant)"
+        "Update Composite & Paint Costs (Labour + Transport + Wastage + Plant + Profit)"
     ):
 
         for elem in type_elements:
@@ -221,13 +229,16 @@ try:
                 + sum(r["plant_time"])
             )
 
-            total_cost = (
+            subtotal = (
                 material_total
                 + wastage_cost
                 + labour_cost
                 + transport_cost
                 + plant_cost
             )
+
+            overhead_cost = subtotal * r["overhead_percent"]
+            total_cost = subtotal + overhead_cost
 
             cost_param.Set(total_cost)
 
@@ -236,6 +247,7 @@ try:
             transport_applied[tname] = transport_cost > 0
             plant_applied[tname] = plant_cost > 0
             wastage_applied[tname] = wastage_cost > 0
+            overhead_applied[tname] = overhead_cost > 0
 
         # Paint / finishes
         for mat in materials:
@@ -256,7 +268,7 @@ summary = []
 
 if updated:
     summary.append(
-        "UPDATED TYPE COSTS (INCL. LABOUR, TRANSPORT, WASTAGE & PLANT):"
+        "UPDATED TYPE COSTS (INCL. LABOUR, TRANSPORT, WASTAGE, PLANT & PROFIT):"
     )
     for name in sorted(updated):
         labels = []
@@ -268,6 +280,8 @@ if updated:
             labels.append("🚜 Plant Inc.")
         if wastage_applied.get(name):
             labels.append("♻️ Wastage Inc.")
+        if overhead_applied.get(name):
+            labels.append("💼 Profit Inc.")
 
         label = "  " + ", ".join(labels) if labels else ""
         summary.append("- {} : {:.2f} ZMW{}".format(name, updated[name], label))
