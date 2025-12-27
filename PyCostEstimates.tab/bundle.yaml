@@ -1,7 +1,6 @@
 # test commit template
 layout:
-  - Cost Update
-  - Amount Populate_Test_1234
-  - Generate_MaterialSchedule
-  - Generate_BOQxls
-  - Grand Total cost
+  - Rate
+  - Amount
+  - Generate BOQ
+  - Grand Total 
