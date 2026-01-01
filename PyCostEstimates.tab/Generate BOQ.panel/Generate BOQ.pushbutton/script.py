@@ -1551,6 +1551,21 @@ for cat_name in CATEGORY_ORDER:
                     qty = prm.AsDouble() * FT_TO_M
                     unit = "m"
 
+            elif cat_name == "Structural Rebar":
+                # Use TOTAL bar length (accounts for quantity of bars)
+                length_param = el.get_Parameter(
+                    DB.BuiltInParameter.REBAR_ELEM_TOTAL_LENGTH
+                )
+
+                if length_param and length_param.HasValue:
+                    qty = length_param.AsDouble() * FT_TO_M
+                    unit = "m"
+                else:
+                    qty = 0.0
+                    unit = "m"
+
+
+
             elif cat_name == "Structural Columns":
                 mat_prm  = el.LookupParameter("Structural Material")
                 mat_elem = revit.doc.GetElement(mat_prm.AsElementId()) if mat_prm else None

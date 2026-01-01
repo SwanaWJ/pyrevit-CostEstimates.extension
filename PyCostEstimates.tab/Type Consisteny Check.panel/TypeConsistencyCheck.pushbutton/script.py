@@ -1,128 +1,111 @@
 # -*- coding: utf-8 -*-
-from pyrevit import revit, forms
 from Autodesk.Revit.DB import (
-    BuiltInCategory,
     FilteredElementCollector,
-    View3D,
-    ElementId
+    BuiltInCategory,
+    BuiltInParameter,
+    ParameterFilterElement,
+    ElementId,
+    ElementParameterFilter,
+    FilterStringRule,
+    FilterStringEquals,
+    Transaction
 )
 
+from pyrevit import revit, forms
+
 doc = revit.doc
-uidoc = revit.uidoc
 view = doc.ActiveView
 
-# --------------------------------------------------
-# VALIDATION
-# --------------------------------------------------
-if not isinstance(view, View3D):
-    forms.alert("Run this tool from a 3D View only.", exitscript=True)
-
-# --------------------------------------------------
-# CATEGORY SETUP (SAFE)
-# --------------------------------------------------
-CATEGORY_MAP = {
+# -------------------------------
+# USER INPUT
+# -------------------------------
+category_map = {
     "Walls": BuiltInCategory.OST_Walls,
     "Floors": BuiltInCategory.OST_Floors,
     "Structural Foundations": BuiltInCategory.OST_StructuralFoundation
 }
 
-category_name = forms.SelectFromList.show(
-    sorted(CATEGORY_MAP.keys()),
-    title="Type Consistency Check",
-    multiselect=False
+category_name = forms.ask_for_one_item(
+    sorted(category_map.keys()),
+    title="Select Category"
 )
 
 if not category_name:
     forms.alert("No category selected.", exitscript=True)
 
-bic = CATEGORY_MAP[category_name]
-
-# --------------------------------------------------
-# TYPE NAME INPUT
-# --------------------------------------------------
-expected_type_name = forms.ask_for_string(
-    prompt="Enter EXACT Type Name to check",
+type_name = forms.ask_for_string(
+    prompt="Enter EXACT Family Type Name:",
     title="Type Consistency Check"
 )
 
-if not expected_type_name:
+if not type_name:
     forms.alert("No type name entered.", exitscript=True)
 
-expected_type_name = expected_type_name.strip()
+bic = category_map[category_name]
 
-# --------------------------------------------------
-# ISOLATE OPTION
-# --------------------------------------------------
-isolate_choice = forms.alert(
-    "Isolate matching elements?\n\nYes = hide non-matching elements",
-    options=["Yes", "No"]
-)
-
-# --------------------------------------------------
-# COLLECT ELEMENTS (HOST ONLY – SAFE)
-# --------------------------------------------------
-elements = (
+# -------------------------------
+# COLLECT ELEMENTS (VALIDATION)
+# -------------------------------
+elements = list(
     FilteredElementCollector(doc, view.Id)
     .OfCategory(bic)
     .WhereElementIsNotElementType()
-    .ToElements()
 )
 
-checked = 0
-matched = 0
-to_hide = []
+if not elements:
+    forms.alert("No elements found in this category in the active view.", exitscript=True)
 
-# --------------------------------------------------
-# TYPE CHECK (CRASH-PROOF)
-# --------------------------------------------------
-for el in elements:
-    try:
-        el_type = doc.GetElement(el.GetTypeId())
-        if not el_type:
-            continue
+# -------------------------------
+# BUILD FILTER (CORRECT API)
+# -------------------------------
+param_id = ElementId(BuiltInParameter.SYMBOL_NAME_PARAM)
+evaluator = FilterStringEquals()
+rule = FilterStringRule(param_id, evaluator, type_name)
+param_filter = ElementParameterFilter(rule)
 
-        checked += 1
+filter_name = "TCHECK_" + category_name + "_" + type_name
 
-        type_name = el_type.Name.strip()
+# -------------------------------
+# TRANSACTION
+# -------------------------------
+t = Transaction(doc, "Type Consistency Check")
+t.Start()
 
-        if type_name == expected_type_name:
-            matched += 1
-        else:
-            to_hide.append(el.Id)
+# Remove existing filter with same name
+for f in FilteredElementCollector(doc).OfClass(ParameterFilterElement):
+    if f.Name == filter_name:
+        doc.Delete(f.Id)
 
-    except Exception:
-        # absolutely safe skip
-        continue
+# Create filter
+filter_elem = ParameterFilterElement.Create(
+    doc,
+    filter_name,
+    [ElementId(bic)]
+)
 
-# --------------------------------------------------
-# APPLY VISIBILITY (NO FILTERS = NO CRASHES)
-# --------------------------------------------------
-with revit.Transaction("Type Consistency Visibility"):
-    if isolate_choice == "Yes":
-        if to_hide:
-            view.HideElements(to_hide)
-    else:
-        # highlight mismatches only
-        if to_hide:
-            view.SetElementOverrides(
-                ElementId.InvalidElementId,  # no-op safety
-                view.GetElementOverrides(ElementId.InvalidElementId)
-            )
+filter_elem.SetElementFilter(param_filter)
 
-# --------------------------------------------------
-# RESULT
-# --------------------------------------------------
+# Apply filter to view
+view.AddFilter(filter_elem.Id)
+view.SetFilterVisibility(filter_elem.Id, True)
+
+# Hide everything that does NOT match
+view.SetFilterOverrides(
+    filter_elem.Id,
+    view.GetFilterOverrides(filter_elem.Id)
+)
+
+t.Commit()
+
+# -------------------------------
+# USER FEEDBACK
+# -------------------------------
 forms.alert(
-    "Type Consistency Check complete.\n\n"
-    "Category: {}\n"
-    "Elements checked: {}\n"
-    "Matching type instances: {}\n"
-    "Hidden (mismatch): {}\n"
-    "\n(No filters were created – safe mode)"
-    .format(
-        category_name,
-        checked,
-        matched,
-        len(to_hide)
-    )
+    "Filter applied.\n\n"
+    "Only elements with type name:\n\n"
+    "'{}'\n\n"
+    "are now visible.\n\n"
+    "If elements disappeared, they are wrongly named."
+    .format(type_name),
+    title="Type Consistency Check"
 )
