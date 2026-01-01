@@ -1545,11 +1545,54 @@ for cat_name in CATEGORY_ORDER:
                     qty = prm.AsDouble() * FT3_TO_M3
                     unit = "m³"
 
+
             elif cat_name == "Structural Framing":
-                prm = el.get_Parameter(DB.BuiltInParameter.CURVE_ELEM_LENGTH)
-                if prm and prm.HasValue:
-                    qty = prm.AsDouble() * FT_TO_M
-                    unit = "m"
+
+                # Detect material
+
+                mat_prm = el.LookupParameter("Structural Material")
+
+                mat_elem = revit.doc.GetElement(mat_prm.AsElementId()) if mat_prm else None
+
+                mat_name = (mat_elem.Name if mat_elem else "").lower()
+
+                vol_prm = el.LookupParameter("Volume")
+
+                len_prm = el.get_Parameter(DB.BuiltInParameter.CURVE_ELEM_LENGTH)
+
+                if "concrete" in mat_name:
+
+                    # Concrete beams / ring beams → volume
+
+                    if vol_prm and vol_prm.HasValue:
+
+                        qty = vol_prm.AsDouble() * FT3_TO_M3
+
+                        unit = "m³"
+
+                    else:
+
+                        qty = 0.0
+
+                        unit = "m³"
+
+
+                else:
+
+                    # Steel beams / channels → length
+
+                    if len_prm and len_prm.HasValue:
+
+                        qty = len_prm.AsDouble() * FT_TO_M
+
+                        unit = "m"
+
+                    else:
+
+                        qty = 0.0
+
+                        unit = "m"
+
 
             elif cat_name == "Structural Rebar":
                 # Use TOTAL bar length (accounts for quantity of bars)
