@@ -5,9 +5,9 @@ Material List Generator
 - Matches BOQ items with recipes (normalized)
 - Multiplies material quantities by BOQ family quantities
 - Aggregates materials across BOQ items
-- Exports shopping-ready CSV to Desktop
+- Exports REAL .xlsx using Excel COM automation
 
-Compatible with pyRevit / IronPython
+STABLE version for pyRevit / IronPython
 """
 
 import csv
@@ -31,7 +31,7 @@ RECIPES_CSV = os.path.abspath(os.path.join(
 ))
 
 DESKTOP = os.path.join(os.environ["USERPROFILE"], "Desktop")
-OUTPUT_CSV = os.path.join(DESKTOP, "Material_List.csv")
+OUTPUT_XLSX = os.path.join(DESKTOP, "Material_List.xlsx")
 
 
 # ------------------------------------------------------------
@@ -39,12 +39,11 @@ OUTPUT_CSV = os.path.join(DESKTOP, "Material_List.csv")
 # ------------------------------------------------------------
 
 def normalize(text):
-    """Normalize names for matching"""
     return text.lower().replace("_", " ").strip()
 
 
 # ------------------------------------------------------------
-# GET BOQ ITEMS (PLACEHOLDER)
+# BOQ ITEMS (PLACEHOLDER)
 # ------------------------------------------------------------
 
 def get_boq_items():
@@ -65,21 +64,18 @@ def get_boq_items():
 def read_recipes(csv_path):
     recipes = defaultdict(list)
 
-    # --- Read binary to avoid NULL byte crash ---
     with open(csv_path, "rb") as f:
         raw = f.read()
 
     # Remove NULL bytes
     raw = raw.replace(b"\x00", b"")
 
-    # Decode safely
     try:
         text = raw.decode("utf-8")
     except:
         text = raw.decode("latin-1")
 
-    lines = text.splitlines()
-    reader = csv.DictReader(lines)
+    reader = csv.DictReader(text.splitlines())
 
     for row in reader:
         boq_item = normalize(row.get("Type", ""))
@@ -89,7 +85,6 @@ def read_recipes(csv_path):
         if not boq_item or not component or not qty_raw:
             continue
 
-        # Skip non-material rows
         skip_words = [
             "labour", "transport", "profit",
             "wastage", "plant", "overhead", "hours"
@@ -98,7 +93,6 @@ def read_recipes(csv_path):
         if any(w in component.lower() for w in skip_words):
             continue
 
-        # Skip percentage values
         if "%" in qty_raw:
             continue
 
@@ -120,38 +114,72 @@ def read_recipes(csv_path):
 # ------------------------------------------------------------
 
 def generate_material_list(boq_items, recipes):
-    material_totals = defaultdict(float)
+    totals = defaultdict(float)
 
     print("---- MATCH CHECK ----")
 
     for item in boq_items:
-        boq_name_raw = item["boq_item"]
-        boq_name = normalize(boq_name_raw)
+        name_raw = item["boq_item"]
+        name = normalize(name_raw)
         family_qty = item["family_qty"]
 
-        if boq_name not in recipes:
-            print("WARNING: No recipe for BOQ item ->", boq_name_raw)
+        if name not in recipes:
+            print("WARNING: No recipe for BOQ item ->", name_raw)
             continue
 
-        for mat in recipes[boq_name]:
-            material_totals[mat["material"]] += (
-                mat["qty_per_family"] * family_qty
-            )
+        for mat in recipes[name]:
+            totals[mat["material"]] += mat["qty_per_family"] * family_qty
 
-    return material_totals
+    return totals
 
 
 # ------------------------------------------------------------
-# EXPORT TO CSV (EXCEL SAFE)
+# EXPORT TO REAL XLSX (PYREVIT-SAFE)
 # ------------------------------------------------------------
 
-def export_to_csv(materials, output_path):
-    with open(output_path, "wb") as f:
-        writer = csv.writer(f)
-        writer.writerow(["Material", "Total Quantity"])
+def export_to_xlsx(materials, output_path):
+    """
+    SAFE Excel COM automation for pyRevit / IronPython
+    """
 
+    import clr
+    clr.AddReference("Microsoft.Office.Interop.Excel")
+    from Microsoft.Office.Interop import Excel
+
+    excel = None
+    workbook = None
+
+    try:
+        excel = Excel.ApplicationClass()
+        excel.Visible = False          # MUST stay False
+        excel.DisplayAlerts = False
+
+        workbook = excel.Workbooks.Add()
+        sheet = workbook.Worksheets[1]
+        sheet.Name = "Material List"
+
+        # Headers
+        sheet.Cells[1, 1].Value2 = "Material"
+        sheet.Cells[1, 2].Value2 = "Total Quantity"
+        sheet.Range("A1:B1").Font.Bold = True
+
+        row = 2
         for material, qty in sorted(materials.items()):
-            writer.writerow([material, round(qty, 3)])
+            sheet.Cells[row, 1].Value2 = material
+            sheet.Cells[row, 2].Value2 = round(qty, 3)
+            row += 1
+
+        sheet.Columns("A:B").AutoFit()
+
+        # 51 = xlOpenXMLWorkbook (.xlsx)
+        workbook.SaveAs(output_path, 51)
+
+    finally:
+        # CRITICAL: close cleanly, no Marshal calls
+        if workbook:
+            workbook.Close(False)
+        if excel:
+            excel.Quit()
 
 
 # ------------------------------------------------------------
@@ -172,10 +200,10 @@ def main():
     if not materials:
         print("WARNING: No materials generated. Check BOQ ↔ recipe names.")
 
-    export_to_csv(materials, OUTPUT_CSV)
+    export_to_xlsx(materials, OUTPUT_XLSX)
 
     print("Material list generated successfully:")
-    print(OUTPUT_CSV)
+    print(OUTPUT_XLSX)
 
 
 if __name__ == "__main__":
