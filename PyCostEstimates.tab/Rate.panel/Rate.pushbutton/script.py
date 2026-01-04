@@ -10,20 +10,11 @@ doc = revit.doc
 # USER INPUTS
 # ---------------------------------------------------------------------
 
-# Province selection
 province = forms.SelectFromList.show(
     [
-        "Central",
-        "Copperbelt",
-        "Eastern",
-        "Luapula",
-        "Lusaka",
-        "Muchinga",
-        "Northern",
-        "NorthWestern",
-        "Southern",
-        "Western",
-        "National",
+        "Central", "Copperbelt", "Eastern", "Luapula", "Lusaka",
+        "Muchinga", "Northern", "NorthWestern", "Southern",
+        "Western", "National",
     ],
     title="Select Province",
     button_name="Use Selected Province"
@@ -33,7 +24,6 @@ if not province:
     forms.alert("No province selected. Script cancelled.")
     raise SystemExit
 
-# Min / Avg / Max selection
 cost_basis = forms.SelectFromList.show(
     ["Min", "Avg", "Max"],
     title="Select Unit Cost Basis",
@@ -44,8 +34,8 @@ if not cost_basis:
     forms.alert("No unit cost basis selected. Script cancelled.")
     raise SystemExit
 
-# Build column name
 cost_column = "{}_{}_UnitCost".format(province, cost_basis)
+national_column = "National_{}_UnitCost".format(cost_basis)
 
 # ---------------------------------------------------------------------
 # Paths
@@ -55,9 +45,10 @@ csv_folder = os.path.join(script_dir, "material_costs")
 recipes_csv = os.path.join(script_dir, "recipes.csv")
 
 # ---------------------------------------------------------------------
-# Load material prices (province-aware)
+# Load material prices (Province → National fallback)
 # ---------------------------------------------------------------------
 material_prices = {}
+material_price_source = {}   # material -> column used
 loaded_files = []
 
 for fname in os.listdir(csv_folder):
@@ -69,10 +60,22 @@ for fname in os.listdir(csv_folder):
         for row in reader:
             try:
                 item = row["Item"].strip()
-                value = row.get(cost_column, "").strip()
-                if not item or not value:
+                if not item:
                     continue
-                material_prices[item] = float(value)
+
+                # Try province first
+                val = row.get(cost_column, "").strip()
+                if val:
+                    material_prices[item] = float(val)
+                    material_price_source[item] = cost_column
+                    continue
+
+                # Fallback to National
+                nat_val = row.get(national_column, "").strip()
+                if nat_val:
+                    material_prices[item] = float(nat_val)
+                    material_price_source[item] = national_column
+
             except:
                 continue
 
@@ -112,7 +115,6 @@ with open(recipes_csv, "r") as f:
 
             cname = comp.lower()
 
-            # Percentage-based
             if pct:
                 pct_val = float(pct.replace("%", "")) / 100.0
                 if "wastage" in cname or "shrinkage" in cname:
@@ -126,7 +128,6 @@ with open(recipes_csv, "r") as f:
                 else:
                     recipes[rtype]["labour_percent"] = pct_val
 
-            # Fixed costs
             if fixed:
                 if cname.startswith("transport"):
                     recipes[rtype]["transport_fixed"].append(float(fixed))
@@ -135,7 +136,6 @@ with open(recipes_csv, "r") as f:
                 else:
                     recipes[rtype]["labour_fixed"].append(float(fixed))
 
-            # Time / distance based
             if time_dist and rate:
                 cost = float(time_dist) * float(rate)
                 if cname.startswith("transport"):
@@ -145,7 +145,6 @@ with open(recipes_csv, "r") as f:
                 else:
                     recipes[rtype]["labour_time"].append(cost)
 
-            # Materials
             if not pct and not fixed and not time_dist:
                 recipes[rtype]["materials"][comp] = qty
 
@@ -191,7 +190,7 @@ for cat in CATEGORIES:
 materials = list(DB.FilteredElementCollector(doc).OfClass(DB.Material))
 
 # ---------------------------------------------------------------------
-# Book-keeping (UNCHANGED)
+# Book-keeping
 # ---------------------------------------------------------------------
 updated = {}
 skipped = {}
@@ -203,6 +202,7 @@ transport_applied = {}
 plant_applied = {}
 wastage_applied = {}
 overhead_applied = {}
+national_fallback_used = {}   # type -> National_Min/Avg/Max
 
 # ---------------------------------------------------------------------
 # TRANSACTION
@@ -235,7 +235,12 @@ try:
                     skipped[tname] = "missing material: {}".format(mat)
                     valid = False
                     break
+
                 material_total += qty * material_prices[mat]
+
+                src = material_price_source.get(mat, "")
+                if src.startswith("National"):
+                    national_fallback_used[tname] = src.replace("_UnitCost", "")
 
             if not valid:
                 continue
@@ -293,7 +298,7 @@ except Exception:
     raise
 
 # ---------------------------------------------------------------------
-# SUMMARY (EMOJIS RESTORED ✅)
+# SUMMARY (EMOJIS + NATIONAL TAG PRESERVED)
 # ---------------------------------------------------------------------
 summary = []
 summary.append("UNIT COST COLUMN USED: {}\n".format(cost_column))
@@ -315,7 +320,11 @@ if updated:
         if overhead_applied.get(name):
             labels.append("💼 Profit")
 
-        label = "  " + ", ".join(labels) if labels else ""
+        fallback = ""
+        if name in national_fallback_used:
+            fallback = " ⚠️ [{}]".format(national_fallback_used[name])
+
+        label = "  " + ", ".join(labels) + fallback if labels or fallback else ""
         summary.append("- {} : {:.2f} ZMW{}".format(name, updated[name], label))
 
 if paint_updated:
