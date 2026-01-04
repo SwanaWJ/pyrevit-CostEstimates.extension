@@ -45,7 +45,16 @@ csv_folder = os.path.join(script_dir, "material_costs")
 recipes_csv = os.path.join(script_dir, "recipes.csv")
 
 # ---------------------------------------------------------------------
-# Load material prices (Province → National fallback)
+# Helpers
+# ---------------------------------------------------------------------
+def is_valid_cost(value):
+    try:
+        return value is not None and str(value).strip() != "" and float(value) > 0
+    except:
+        return False
+
+# ---------------------------------------------------------------------
+# Load material prices (Province → National fallback, FIXED)
 # ---------------------------------------------------------------------
 material_prices = {}
 material_price_source = {}   # material -> column used
@@ -63,16 +72,16 @@ for fname in os.listdir(csv_folder):
                 if not item:
                     continue
 
-                # Try province first
-                val = row.get(cost_column, "").strip()
-                if val:
-                    material_prices[item] = float(val)
+                # 1️⃣ Try selected province
+                prov_val = row.get(cost_column, "")
+                if is_valid_cost(prov_val):
+                    material_prices[item] = float(prov_val)
                     material_price_source[item] = cost_column
                     continue
 
-                # Fallback to National
-                nat_val = row.get(national_column, "").strip()
-                if nat_val:
+                # 2️⃣ Fallback to National (Min / Avg / Max)
+                nat_val = row.get(national_column, "")
+                if is_valid_cost(nat_val):
                     material_prices[item] = float(nat_val)
                     material_price_source[item] = national_column
 
@@ -202,7 +211,7 @@ transport_applied = {}
 plant_applied = {}
 wastage_applied = {}
 overhead_applied = {}
-national_fallback_used = {}   # type -> National_Min/Avg/Max
+national_fallback_used = {}   # type -> National_Min / Avg / Max
 
 # ---------------------------------------------------------------------
 # TRANSACTION
@@ -298,7 +307,7 @@ except Exception:
     raise
 
 # ---------------------------------------------------------------------
-# SUMMARY (EMOJIS + NATIONAL TAG PRESERVED)
+# SUMMARY (UNCHANGED EXCEPT CORRECT FALLBACK TAGGING)
 # ---------------------------------------------------------------------
 summary = []
 summary.append("UNIT COST COLUMN USED: {}\n".format(cost_column))
