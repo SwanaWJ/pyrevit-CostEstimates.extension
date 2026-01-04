@@ -7,18 +7,45 @@ from pyrevit import revit, DB, forms
 doc = revit.doc
 
 # ---------------------------------------------------------------------
-# Ask user which unit cost to use
+# USER INPUTS
 # ---------------------------------------------------------------------
-cost_choice = forms.SelectFromList.show(
-    ["Min_UnitCost", "Avg_UnitCost", "Max_UnitCost"],
+
+# Province selection
+province = forms.SelectFromList.show(
+    [
+        "Central",
+        "Copperbelt",
+        "Eastern",
+        "Luapula",
+        "Lusaka",
+        "Muchinga",
+        "Northern",
+        "NorthWestern",
+        "Southern",
+        "Western",
+        "National",
+    ],
+    title="Select Province",
+    button_name="Use Selected Province"
+)
+
+if not province:
+    forms.alert("No province selected. Script cancelled.")
+    raise SystemExit
+
+# Min / Avg / Max selection
+cost_basis = forms.SelectFromList.show(
+    ["Min", "Avg", "Max"],
     title="Select Unit Cost Basis",
     button_name="Use Selected Cost"
 )
 
-if not cost_choice:
-    forms.alert("No unit cost selected. Script cancelled.")
+if not cost_basis:
+    forms.alert("No unit cost basis selected. Script cancelled.")
     raise SystemExit
 
+# Build column name
+cost_column = "{}_{}_UnitCost".format(province, cost_basis)
 
 # ---------------------------------------------------------------------
 # Paths
@@ -27,9 +54,8 @@ script_dir = os.path.dirname(__file__)
 csv_folder = os.path.join(script_dir, "material_costs")
 recipes_csv = os.path.join(script_dir, "recipes.csv")
 
-
 # ---------------------------------------------------------------------
-# Load material prices (using selected cost column)
+# Load material prices (province-aware)
 # ---------------------------------------------------------------------
 material_prices = {}
 loaded_files = []
@@ -43,20 +69,17 @@ for fname in os.listdir(csv_folder):
         for row in reader:
             try:
                 item = row["Item"].strip()
-                val = row.get(cost_choice, "").strip()
-
-                if not item or not val:
+                value = row.get(cost_column, "").strip()
+                if not item or not value:
                     continue
-
-                material_prices[item] = float(val)
+                material_prices[item] = float(value)
             except:
                 continue
 
     loaded_files.append(fname)
 
-
 # ---------------------------------------------------------------------
-# Load recipes (materials + labour + transport + wastage + plant + profit)
+# Load recipes (UNCHANGED)
 # ---------------------------------------------------------------------
 recipes = {}
 
@@ -74,32 +97,24 @@ with open(recipes_csv, "r") as f:
 
             recipes.setdefault(rtype, {
                 "materials": {},
-
                 "labour_percent": 0.0,
                 "labour_fixed": [],
                 "labour_time": [],
-
                 "transport_percent": 0.0,
                 "transport_fixed": [],
                 "transport_distance": [],
-
                 "wastage_percent": 0.0,
-
                 "plant_percent": 0.0,
                 "plant_fixed": [],
                 "plant_time": [],
-
                 "overhead_percent": 0.0,
             })
 
             cname = comp.lower()
 
-            # -----------------------------
-            # Percentage-based costs
-            # -----------------------------
+            # Percentage-based
             if pct:
                 pct_val = float(pct.replace("%", "")) / 100.0
-
                 if "wastage" in cname or "shrinkage" in cname:
                     recipes[rtype]["wastage_percent"] = pct_val
                 elif "profit" in cname or "overhead" in cname:
@@ -111,9 +126,7 @@ with open(recipes_csv, "r") as f:
                 else:
                     recipes[rtype]["labour_percent"] = pct_val
 
-            # -----------------------------
             # Fixed costs
-            # -----------------------------
             if fixed:
                 if cname.startswith("transport"):
                     recipes[rtype]["transport_fixed"].append(float(fixed))
@@ -122,9 +135,7 @@ with open(recipes_csv, "r") as f:
                 else:
                     recipes[rtype]["labour_fixed"].append(float(fixed))
 
-            # -----------------------------
-            # Time / Distance based
-            # -----------------------------
+            # Time / distance based
             if time_dist and rate:
                 cost = float(time_dist) * float(rate)
                 if cname.startswith("transport"):
@@ -134,18 +145,15 @@ with open(recipes_csv, "r") as f:
                 else:
                     recipes[rtype]["labour_time"].append(cost)
 
-            # -----------------------------
             # Materials
-            # -----------------------------
             if not pct and not fixed and not time_dist:
                 recipes[rtype]["materials"][comp] = qty
 
         except:
             continue
 
-
 # ---------------------------------------------------------------------
-# SAFE CATEGORY COLLECTION
+# Categories (UNCHANGED)
 # ---------------------------------------------------------------------
 CATEGORIES = [
     DB.BuiltInCategory.OST_Walls,
@@ -171,21 +179,19 @@ CATEGORIES = [
 type_elements = []
 for cat in CATEGORIES:
     try:
-        elems = (
+        type_elements.extend(
             DB.FilteredElementCollector(doc)
             .OfCategory(cat)
             .WhereElementIsElementType()
             .ToElements()
         )
-        type_elements.extend(elems)
     except:
         continue
 
 materials = list(DB.FilteredElementCollector(doc).OfClass(DB.Material))
 
-
 # ---------------------------------------------------------------------
-# Book-keeping
+# Book-keeping (UNCHANGED)
 # ---------------------------------------------------------------------
 updated = {}
 skipped = {}
@@ -198,13 +204,12 @@ plant_applied = {}
 wastage_applied = {}
 overhead_applied = {}
 
-
 # ---------------------------------------------------------------------
 # TRANSACTION
 # ---------------------------------------------------------------------
 try:
     with revit.Transaction(
-        "Update Composite & Paint Costs ({})".format(cost_choice)
+        "Composite & Paint Cost Update [{}]".format(cost_column)
     ):
 
         for elem in type_elements:
@@ -287,12 +292,11 @@ except Exception:
     forms.alert(traceback.format_exc(), title="Cost Update Failed")
     raise
 
-
 # ---------------------------------------------------------------------
-# SUMMARY
+# SUMMARY (EMOJIS RESTORED ✅)
 # ---------------------------------------------------------------------
 summary = []
-summary.append("UNIT COST BASIS USED: {}\n".format(cost_choice))
+summary.append("UNIT COST COLUMN USED: {}\n".format(cost_column))
 
 if updated:
     summary.append(
@@ -301,13 +305,13 @@ if updated:
     for name in sorted(updated):
         labels = []
         if labour_applied.get(name):
-            labels.append("⚠ Labour")
+            labels.append("⚠️ Labour")
         if transport_applied.get(name):
             labels.append("🚚 Transport")
         if plant_applied.get(name):
             labels.append("🚜 Plant")
         if wastage_applied.get(name):
-            labels.append("♻ Wastage")
+            labels.append("♻️ Wastage")
         if overhead_applied.get(name):
             labels.append("💼 Profit")
 
