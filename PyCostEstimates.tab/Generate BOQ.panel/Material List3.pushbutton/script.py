@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 
 """
-Material List Tool - Stages 1 to 3 (FINAL, HEADER-SAFE)
+Material List Tool - Stages 1 to 4 (STABLE, FINAL)
 
-- Stage 1: Extract Revit quantities
-- Stage 2: Match recipes.csv (Type → Component)
-- Stage 3: Match material_unit_costs.csv (Type / Item)
+Stage 1: Extract model quantities from Revit
+Stage 2: Match recipes.csv (Type -> Component)
+Stage 3: Resolve unit costs from material_unit_costs.csv (Item)
+Stage 4: Calculate final quantities and total costs
 """
 
 # ------------------------------------------------------------
@@ -17,7 +18,7 @@ output = script.get_output()
 output.print_md("Material List script started")
 
 # ------------------------------------------------------------
-# SINGLE SAFE USER INPUT
+# SINGLE SAFE USER INPUT (ONE DIALOG ONLY)
 # ------------------------------------------------------------
 
 provinces = [
@@ -112,11 +113,19 @@ def normalize(text):
 def norm_key(text):
     if not text:
         return ""
-    return text.lower().replace(" ", "").replace("-", "").replace("_", "")
+    return (
+        text.lower()
+        .replace(" ", "")
+        .replace("-", "")
+        .replace("_", "")
+    )
 
 def get_bic(elem):
     try:
-        return System.Enum.Parse(BuiltInCategory, str(elem.Category.Id.IntegerValue))
+        return System.Enum.Parse(
+            BuiltInCategory,
+            str(elem.Category.Id.IntegerValue)
+        )
     except:
         return None
 
@@ -181,7 +190,7 @@ for elem in elements:
 
     model_data[type_name]["raw_qty"] += raw_qty
 
-# Unit conversion
+# Convert Revit internal units
 for d in model_data.values():
     if d["unit"] == "m2":
         d["revit_quantity"] = UnitUtils.ConvertFromInternalUnits(
@@ -216,17 +225,17 @@ for r in csv.DictReader(text.splitlines()):
     except:
         pass
 
-for t, d in model_data.items():
-    t_key = normalize(t)
+for family_name, family_data in model_data.items():
+    fam_key = normalize(family_name)
     for recipe_type, comps in recipes.items():
-        if recipe_type in t_key:
+        if recipe_type in fam_key:
             for comp, qty in comps:
-                d["components"][comp] = {"recipe_qty": qty}
+                family_data["components"][comp] = {"recipe_qty": qty}
 
 output.print_md("Stage 2 complete")
 
 # ------------------------------------------------------------
-# STAGE 3 — READ UNIT COSTS (Type / Item SAFE)
+# STAGE 3 — RESOLVE UNIT COSTS (Item COLUMN)
 # ------------------------------------------------------------
 
 output.print_md("Stage 3: Resolving unit costs")
@@ -236,11 +245,9 @@ costs = {}
 with open(UNIT_COSTS_CSV, "rb") as f:
     text = f.read().replace(b"\x00", b"").decode("utf-8", "ignore")
 
-reader = csv.DictReader(text.splitlines())
-
-for r in reader:
+for r in csv.DictReader(text.splitlines()):
     try:
-        name = r.get("Type") or r.get("Item")
+        name = r.get("Item")
         if not name:
             continue
 
@@ -254,8 +261,8 @@ for r in reader:
 
 priced = 0
 
-for d in model_data.values():
-    for comp_name, comp in d["components"].items():
+for family_data in model_data.values():
+    for comp_name, comp in family_data["components"].items():
         lookup = norm_key(comp_name)
         if lookup in costs:
             comp["uom"] = costs[lookup]["uom"]
@@ -264,3 +271,56 @@ for d in model_data.values():
 
 output.print_md("Stage 3 complete")
 output.print_md("Priced components: {}".format(priced))
+
+# ------------------------------------------------------------
+# STAGE 4 — FINAL QUANTITY & COST AGGREGATION
+# ------------------------------------------------------------
+
+output.print_md("Stage 4: Calculating final quantities and totals")
+
+final_materials = {}
+
+for family_name, family_data in model_data.items():
+    revit_qty = family_data.get("revit_quantity", 0.0)
+    if revit_qty <= 0:
+        continue
+
+    for comp_name, comp in family_data["components"].items():
+        recipe_qty = comp.get("recipe_qty", 0.0)
+        unit_cost = comp.get("unit_cost", 0.0)
+        uom = comp.get("uom", "")
+
+        final_qty = revit_qty * recipe_qty
+
+        if comp_name not in final_materials:
+            final_materials[comp_name] = {
+                "uom": uom,
+                "total_qty": 0.0,
+                "unit_cost": unit_cost,
+                "total_cost": 0.0
+            }
+
+        final_materials[comp_name]["total_qty"] += final_qty
+        final_materials[comp_name]["total_cost"] += final_qty * unit_cost
+
+output.print_md("Stage 4 complete")
+output.print_md("Total unique materials: {}".format(len(final_materials)))
+
+# ------------------------------------------------------------
+# SAFE PREVIEW (FIRST 5 MATERIALS)
+# ------------------------------------------------------------
+
+output.print_md("Sample results:")
+
+for i, (mat, data) in enumerate(final_materials.items()):
+    output.print_md(
+        "- {} | {} | Qty: {:.3f} | Unit: {:.2f} | Total: {:.2f}".format(
+            mat,
+            data["uom"],
+            data["total_qty"],
+            data["unit_cost"],
+            data["total_cost"]
+        )
+    )
+    if i == 4:
+        break
