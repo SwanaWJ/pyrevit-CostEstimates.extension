@@ -59,21 +59,29 @@ from collections import defaultdict
 doc = __revit__.ActiveUIDocument.Document
 
 # ------------------------------------------------------------
-# FILE PATHS
+# FILE PATHS (FIXED)
 # ------------------------------------------------------------
 
 BASE_DIR = os.path.dirname(__file__)
 
 RECIPES_CSV = os.path.abspath(os.path.join(
     BASE_DIR, "..", "..",
-    "Rate.panel", "Rate.pushbutton", "recipes.csv"
+    "Rate.panel", "Rate.pushbutton",
+    "recipes.csv"
 ))
 
 UNIT_COSTS_CSV = os.path.abspath(os.path.join(
     BASE_DIR, "..", "..",
     "Rate.panel", "Rate.pushbutton",
-    "material_costs", "material_unit_costs.csv"
+    "material_unit_costs.csv"
 ))
+
+if not os.path.exists(UNIT_COSTS_CSV):
+    forms.alert(
+        "Unit cost file not found:\n\n{}".format(UNIT_COSTS_CSV),
+        title="Missing Unit Cost CSV"
+    )
+    script.exit()
 
 # ------------------------------------------------------------
 # CATEGORY → UNIT MAP
@@ -229,7 +237,7 @@ for fam, data in model_data.items():
 output.print_md("Stage 2 complete")
 
 # ------------------------------------------------------------
-# STAGE 3 — RESOLVE UNIT COSTS
+# STAGE 3 — RESOLVE UNIT COSTS (FIXED PATH)
 # ------------------------------------------------------------
 
 output.print_md("Stage 3: Resolving unit costs")
@@ -260,7 +268,7 @@ for data in model_data.values():
 output.print_md("Stage 3 complete")
 
 # ------------------------------------------------------------
-# STAGE 4 — FINAL QUANTITIES (GROUPED BY TYPE) ✅ FIX
+# STAGE 4 — FINAL QUANTITIES (GROUPED BY TYPE)
 # ------------------------------------------------------------
 
 output.print_md("Stage 4: Calculating final quantities (grouped by type)")
@@ -268,7 +276,7 @@ output.print_md("Stage 4: Calculating final quantities (grouped by type)")
 grouped_materials = {}
 
 for type_name, data in model_data.items():
-    revit_qty = data["_toggle"] if False else data["revit_quantity"]
+    revit_qty = data["revit_quantity"]
     if revit_qty <= 0 or not data["components"]:
         continue
 
