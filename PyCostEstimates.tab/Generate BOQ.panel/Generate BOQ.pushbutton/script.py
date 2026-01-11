@@ -20,7 +20,7 @@ xlsx_path = os.path.join(desktop, "BOQ_Export_From_Model.xlsx")
 # Parameters / constants
 # ------------------------------------------------------------------------------
 PARAM_COST  = "Cost"
-PARAM_TOTAL = "Test_1234"
+PARAM_TOTAL = "Amount (Qty*Rate)"   # ← FIX (was Test_1234)
 
 TAB_COLORS = {
     "COVER":   "#A6A6A6",
