@@ -36,7 +36,7 @@ message = "**Total of Test_1234 across {} elements:**\n\n".format(total_count)
 message += "ZAR {:.2f}\n\n".format(grand_total)
 message += "**Category Breakdown:**\n"
 for cat in sorted(category_totals.keys()):
-    message += "- {} ({}): ZAR {:.2f}\n".format(cat, category_counts[cat], category_totals[cat])
+    message += "- {} ({}): EUR {:.2f}\n".format(cat, category_counts[cat], category_totals[cat])
 
 # --- Show popup ---
 forms.alert(message, title="Test_1234 Totals by Category", warn_icon=True)
