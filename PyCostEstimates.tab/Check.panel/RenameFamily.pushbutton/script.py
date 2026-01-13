@@ -1,6 +1,17 @@
 # -*- coding: utf-8 -*-
 from pyrevit import revit, forms, script
-from Autodesk.Revit.DB import *
+from Autodesk.Revit.DB import (
+    FamilySymbol,
+    WallType,
+    FloorType,
+    RoofType,
+    WallFoundationType,
+    ElementType,
+    BuiltInCategory,
+    BuiltInParameter,
+    CategoryType,
+    FilteredElementCollector
+)
 import csv
 import os
 import unicodedata
@@ -10,16 +21,17 @@ doc = revit.doc
 # --------------------------------------------------
 # CONFIG
 # --------------------------------------------------
-CSV_COLUMN = "Type"   # MUST match CSV header exactly
+CSV_COLUMN = "Type"
 
 # --------------------------------------------------
-# LOCATE CSV (AUTHORITATIVE PATH)
+# RESOLVE SHARED CSV PATH
 # --------------------------------------------------
-this_pushbutton = os.path.dirname(script.get_bundle_file("script.py"))
-tab_dir = os.path.dirname(os.path.dirname(this_pushbutton))
+script_dir = os.path.dirname(script.get_bundle_file("script.py"))
+extension_root = os.path.abspath(os.path.join(script_dir, "..", "..", ".."))
 
 csv_file = os.path.join(
-    tab_dir,
+    extension_root,
+    "PyCostEstimates.tab",
     "Update.panel",
     "Apply Rate.pushbutton",
     "recipes.csv"
@@ -27,34 +39,29 @@ csv_file = os.path.join(
 
 if not os.path.exists(csv_file):
     forms.alert(
-        "CSV file not found:\n{}".format(csv_file),
+        "recipes.csv not found at:\n\n{}".format(csv_file),
         exitscript=True
     )
 
 # --------------------------------------------------
-# TEXT NORMALISATION (EXCEL / UNICODE SAFE)
+# TEXT CLEANUP
 # --------------------------------------------------
 def clean_text(s):
     if not s:
         return None
-    # Normalise Unicode (fix smart characters)
     s = unicodedata.normalize("NFKC", s)
-    # Replace non-breaking spaces and tabs
     s = s.replace(u"\xa0", u" ")
     s = s.replace("\t", " ")
-    # Collapse whitespace
     return " ".join(s.split()).strip()
 
 # --------------------------------------------------
-# LOAD CSV (IRONPYTHON-SAFE, ENCODING-ROBUST)
+# LOAD CSV (IRONPYTHON SAFE)
 # --------------------------------------------------
 csv_names = []
 
-# Read raw bytes first
 with open(csv_file, "rb") as f:
     raw = f.read()
 
-# Try UTF-8 (with BOM), fallback to Windows-1252
 try:
     text = raw.decode("utf-8-sig")
 except:
@@ -75,23 +82,20 @@ for row in reader:
     if val:
         csv_names.append(val)
 
-# Deduplicate while preserving order
-seen = set()
-csv_names = [n for n in csv_names if not (n in seen or seen.add(n))]
-
-if not csv_names:
-    forms.alert("No valid build-up names found in CSV.", exitscript=True)
+csv_names = list(dict.fromkeys(csv_names))
 
 # --------------------------------------------------
-# COLLECT MODEL TYPES (NO OVER-FILTERING)
+# COLLECT MODEL TYPES (CATEGORY-BASED, CORRECT)
 # --------------------------------------------------
-type_classes = [
-    FamilySymbol,        # Loadable families
-    WallType,            # Walls
-    FloorType,           # Floors / slabs / pad foundations
-    RoofType,            # Roofs
-    WallFoundationType   # Wall / strip foundations
-]
+SUPPORTED_CATEGORIES = {
+    BuiltInCategory.OST_Walls,
+    BuiltInCategory.OST_Floors,
+    BuiltInCategory.OST_Roofs,
+    BuiltInCategory.OST_StructuralFoundation,
+    BuiltInCategory.OST_Fascia,
+    BuiltInCategory.OST_Gutter,
+    BuiltInCategory.OST_RoofSoffit
+}
 
 def get_type_name(t):
     p = t.get_Parameter(BuiltInParameter.SYMBOL_NAME_PARAM)
@@ -99,29 +103,29 @@ def get_type_name(t):
 
 family_dict = {}
 
-for cls in type_classes:
-    for t in (
-        FilteredElementCollector(doc)
-        .OfClass(cls)
-        .WhereElementIsElementType()
-        .ToElements()
-    ):
-        cat = t.Category
-        if not cat:
-            continue
-        if cat.CategoryType != CategoryType.Model:
-            continue
-        if cat.IsTagCategory:
-            continue
+for t in (
+    FilteredElementCollector(doc)
+    .OfClass(ElementType)
+    .ToElements()
+):
+    cat = t.Category
+    if not cat:
+        continue
+    if cat.CategoryType != CategoryType.Model:
+        continue
+    if cat.IsTagCategory:
+        continue
+    if cat.Id.IntegerValue not in [int(c) for c in SUPPORTED_CATEGORIES]:
+        continue
 
-        key = "{} : {}".format(cat.Name, get_type_name(t))
-        family_dict[key] = t
+    key = "{} : {}".format(cat.Name, get_type_name(t))
+    family_dict[key] = t
 
 if not family_dict:
     forms.alert("No valid model types found.", exitscript=True)
 
 # --------------------------------------------------
-# INTERACTIVE RENAME LOOP (REVIT-CORRECT)
+# INTERACTIVE RENAME LOOP
 # --------------------------------------------------
 with revit.Transaction("Rename Model Types from CSV"):
 
@@ -147,7 +151,6 @@ with revit.Transaction("Rename Model Types from CSV"):
         old_name = get_type_name(elem_type)
 
         try:
-            # Loadable family types
             if isinstance(elem_type, FamilySymbol):
                 param = elem_type.get_Parameter(
                     BuiltInParameter.SYMBOL_NAME_PARAM
@@ -155,8 +158,6 @@ with revit.Transaction("Rename Model Types from CSV"):
                 if not param or param.IsReadOnly:
                     raise Exception("Name parameter is read-only")
                 param.Set(csv_name)
-
-            # System family types
             else:
                 elem_type.Name = csv_name
 
@@ -168,7 +169,6 @@ with revit.Transaction("Rename Model Types from CSV"):
             )
             continue
 
-        # Update state
         csv_names.remove(csv_name)
         family_dict.pop(fam_key)
 
@@ -181,5 +181,5 @@ with revit.Transaction("Rename Model Types from CSV"):
 
 forms.alert(
     "Renaming complete.\n\n"
-    "CSV was reloaded from disk and applied successfully."
+    "Build-up names applied successfully."
 )
