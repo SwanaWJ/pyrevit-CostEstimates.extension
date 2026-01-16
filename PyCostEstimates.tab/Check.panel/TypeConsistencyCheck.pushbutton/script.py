@@ -1,111 +1,125 @@
 # -*- coding: utf-8 -*-
-from Autodesk.Revit.DB import (
-    FilteredElementCollector,
-    BuiltInCategory,
-    BuiltInParameter,
-    ParameterFilterElement,
-    ElementId,
-    ElementParameterFilter,
-    FilterStringRule,
-    FilterStringEquals,
-    Transaction
-)
 
+from Autodesk.Revit.DB import *
+from Autodesk.Revit.UI import TaskDialog
 from pyrevit import revit, forms
+from System.Collections.Generic import List
 
 doc = revit.doc
 view = doc.ActiveView
 
-# -------------------------------
+# --------------------------------------------------
 # USER INPUT
-# -------------------------------
-category_map = {
-    "Walls": BuiltInCategory.OST_Walls,
-    "Floors": BuiltInCategory.OST_Floors,
-    "Structural Foundations": BuiltInCategory.OST_StructuralFoundation
-}
-
-category_name = forms.ask_for_one_item(
-    sorted(category_map.keys()),
-    title="Select Category"
-)
-
-if not category_name:
-    forms.alert("No category selected.", exitscript=True)
-
-type_name = forms.ask_for_string(
-    prompt="Enter EXACT Family Type Name:",
+# --------------------------------------------------
+search_text = forms.ask_for_string(
+    prompt="Enter FAMILY TYPE name (contains):",
     title="Type Consistency Check"
 )
 
-if not type_name:
-    forms.alert("No type name entered.", exitscript=True)
+if not search_text:
+    forms.alert("No text entered. Command cancelled.", exitscript=True)
 
-bic = category_map[category_name]
+# --------------------------------------------------
+# FIND CATEGORIES THAT SUPPORT TYPE NAME
+# --------------------------------------------------
+type_name_param_id = ElementId(BuiltInParameter.ALL_MODEL_TYPE_NAME)
 
-# -------------------------------
-# COLLECT ELEMENTS (VALIDATION)
-# -------------------------------
-elements = list(
-    FilteredElementCollector(doc, view.Id)
-    .OfCategory(bic)
-    .WhereElementIsNotElementType()
+valid_cat_ids = List[ElementId]()
+
+for cat in doc.Settings.Categories:
+    try:
+        if cat.CategoryType != CategoryType.Model:
+            continue
+        if not cat.AllowsBoundParameters:
+            continue
+
+        params = ParameterFilterUtilities.GetFilterableParametersInCommon(
+            doc, List[ElementId]([cat.Id])
+        )
+
+        if type_name_param_id in params:
+            valid_cat_ids.Add(cat.Id)
+
+    except:
+        continue
+
+if valid_cat_ids.Count == 0:
+    forms.alert(
+        "No model categories support Type Name filtering in this document.",
+        exitscript=True
+    )
+
+# --------------------------------------------------
+# PARAMETER PROVIDER
+# --------------------------------------------------
+provider = ParameterValueProvider(type_name_param_id)
+
+# --------------------------------------------------
+# FILTER RULES
+# --------------------------------------------------
+contains_rule = FilterStringRule(
+    provider,
+    FilterStringContains(),
+    search_text
 )
 
-if not elements:
-    forms.alert("No elements found in this category in the active view.", exitscript=True)
+# Inverted rule → everything else
+not_contains_rule = FilterStringRule(
+    provider,
+    FilterStringContains(),
+    search_text
+)
 
-# -------------------------------
-# BUILD FILTER (CORRECT API)
-# -------------------------------
-param_id = ElementId(BuiltInParameter.SYMBOL_NAME_PARAM)
-evaluator = FilterStringEquals()
-rule = FilterStringRule(param_id, evaluator, type_name)
-param_filter = ElementParameterFilter(rule)
+match_filter = ElementParameterFilter(contains_rule)
+other_filter = ElementParameterFilter(not_contains_rule, True)
 
-filter_name = "TCHECK_" + category_name + "_" + type_name
+# --------------------------------------------------
+# FILTER NAMES
+# --------------------------------------------------
+safe_name = search_text.replace(" ", "_")
+match_name = "BOQ_MATCH_{}".format(safe_name)
+other_name = "BOQ_OTHER_{}".format(safe_name)
 
-# -------------------------------
+# --------------------------------------------------
 # TRANSACTION
-# -------------------------------
-t = Transaction(doc, "Type Consistency Check")
+# --------------------------------------------------
+t = Transaction(doc, "Isolate Family Type by Name")
 t.Start()
 
-# Remove existing filter with same name
-for f in FilteredElementCollector(doc).OfClass(ParameterFilterElement):
-    if f.Name == filter_name:
-        doc.Delete(f.Id)
+def get_or_create_filter(name, elem_filter):
+    for f in FilteredElementCollector(doc).OfClass(ParameterFilterElement):
+        if f.Name == name:
+            return f
 
-# Create filter
-filter_elem = ParameterFilterElement.Create(
-    doc,
-    filter_name,
-    [ElementId(bic)]
-)
+    pf = ParameterFilterElement.Create(
+        doc,
+        name,
+        valid_cat_ids
+    )
+    pf.SetElementFilter(elem_filter)
+    return pf
 
-filter_elem.SetElementFilter(param_filter)
+match_pf = get_or_create_filter(match_name, match_filter)
+other_pf = get_or_create_filter(other_name, other_filter)
 
-# Apply filter to view
-view.AddFilter(filter_elem.Id)
-view.SetFilterVisibility(filter_elem.Id, True)
+# Apply to active view
+for pf in [match_pf, other_pf]:
+    if not view.IsFilterApplied(pf.Id):
+        view.AddFilter(pf.Id)
 
-# Hide everything that does NOT match
-view.SetFilterOverrides(
-    filter_elem.Id,
-    view.GetFilterOverrides(filter_elem.Id)
-)
+# Visibility logic
+view.SetFilterVisibility(match_pf.Id, True)
+view.SetFilterVisibility(other_pf.Id, False)
 
 t.Commit()
 
-# -------------------------------
-# USER FEEDBACK
-# -------------------------------
-forms.alert(
-    "Filter applied.\n\n"
-    "Only elements with type name:\n\n"
+# --------------------------------------------------
+# FEEDBACK
+# --------------------------------------------------
+TaskDialog.Show(
+    "TypeConsistencyCheck",
+    "Isolation complete.\n\n"
+    "Only family types matching:\n\n"
     "'{}'\n\n"
-    "are now visible.\n\n"
-    "If elements disappeared, they are wrongly named."
-    .format(type_name),
-    title="Type Consistency Check"
+    "are visible.".format(search_text)
 )
