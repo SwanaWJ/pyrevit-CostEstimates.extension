@@ -1,9 +1,9 @@
-title: "Create\parameters"
+title: Create Parameters
 
 tooltip: >
-
-
-  Author: Wachama J. Swana
-  Version: 1.0.0
+  Power setup for Cost Estimates.
+  Creates required shared parameters and binds them to family elements
+  to enable cost calculation at family type level.
 
 author: Wachama J. Swana
+version: 1.0.0
