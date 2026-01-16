@@ -13,7 +13,7 @@ except ImportError:
     USE_SPEC_TYPE = False
 
 
-PARAM_NAME = "xy"
+PARAM_NAME = "Amount (Qty*Rate)"
 GROUP_NAME = "BOQ"
 
 output = script.get_output()

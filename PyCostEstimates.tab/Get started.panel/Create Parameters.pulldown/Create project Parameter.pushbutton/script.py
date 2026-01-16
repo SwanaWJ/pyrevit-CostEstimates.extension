@@ -9,7 +9,7 @@ from Autodesk.Revit.DB import (
 
 output = script.get_output()
 
-PARAM_NAME = "xy"
+PARAM_NAME = "Amount (Qty*Rate)"
 SHARED_GROUP = "BOQ"
 PARAM_GROUP = BuiltInParameterGroup.PG_DATA  # Group parameter under
 

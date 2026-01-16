@@ -1,6 +1,9 @@
+# -*- coding: utf-8 -*-
+
 import csv
 import os
 import codecs
+
 from Autodesk.Revit.DB import *
 from pyrevit import revit
 
@@ -27,13 +30,15 @@ ALLOWED_CATEGORIES = [
 ALLOWED_CAT_IDS = [int(cat) for cat in ALLOWED_CATEGORIES]
 
 # ---------------------------------------
-# OUTPUT
+# OUTPUT → SAME PUSHBUTTON FOLDER
 # ---------------------------------------
-desktop = os.path.join(os.environ["USERPROFILE"], "Desktop")
-output_path = os.path.join(desktop, "FamilyTypes_With_Comments.csv")
+script_dir = os.path.dirname(__file__)
+output_path = os.path.join(script_dir, "FamilyTypes_With_Comments.csv")
 
+# ---------------------------------------
+# COLLECT FAMILY TYPES (LOADABLE ONLY)
+# ---------------------------------------
 collector = FilteredElementCollector(doc).OfClass(FamilySymbol)
-
 rows = []
 
 for symbol in collector:
@@ -42,15 +47,12 @@ for symbol in collector:
         if not cat:
             continue
 
-        # STRICT whitelist filter
         if cat.Id.IntegerValue not in ALLOWED_CAT_IDS:
             continue
 
-        # Exclude view-only / detail families
         if hasattr(symbol, "IsActiveViewOnly") and symbol.IsActiveViewOnly:
             continue
 
-        # Type Name (safe, no .Name)
         name_param = symbol.get_Parameter(BuiltInParameter.SYMBOL_NAME_PARAM)
         if not name_param:
             continue
@@ -59,7 +61,6 @@ for symbol in collector:
         if not type_name:
             continue
 
-        # Type Comments
         comment_param = symbol.LookupParameter("Type Comments")
         type_comments = comment_param.AsString() if comment_param else ""
 
@@ -69,7 +70,7 @@ for symbol in collector:
         continue
 
 # ---------------------------------------
-# WRITE UTF-8 CSV
+# WRITE UTF-8 CSV (FORCE OVERWRITE)
 # ---------------------------------------
 with codecs.open(output_path, "w", encoding="utf-8") as csvfile:
     writer = csv.writer(csvfile)
@@ -77,4 +78,6 @@ with codecs.open(output_path, "w", encoding="utf-8") as csvfile:
     writer.writerows(rows)
 
 print("CSV created successfully:")
-print(output_path)
+print("Folder:", script_dir)
+print("File:", output_path)
+print("Exported rows:", len(rows))
