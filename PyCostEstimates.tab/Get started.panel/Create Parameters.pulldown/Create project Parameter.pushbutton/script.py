@@ -1,92 +1,100 @@
-from Autodesk.Revit.DB import *
-from pyrevit import revit, forms
-import os
+# -*- coding: utf-8 -*-
 
-doc = revit.doc
-app = doc.Application
-
-PARAM_NAME = "xy"
-PARAM_GROUP_NAME = "BOQ"
-PARAM_GROUP = BuiltInParameterGroup.PG_DATA
-
-# -------------------------------------------------
-# DETERMINE PARAMETER SPEC (2019–2025 SAFE)
-# -------------------------------------------------
-if int(app.VersionNumber) >= 2022:
-    PARAM_SPEC = SpecTypeId.Currency
-else:
-    PARAM_SPEC = ParameterType.Currency  # fallback for 2019–2021
-
-# -------------------------------------------------
-# ENSURE SHARED PARAMETER FILE EXISTS
-# -------------------------------------------------
-sp_path = os.path.join(
-    os.environ["USERPROFILE"],
-    "Documents",
-    "SharedParameters_BOQ.txt"
+from pyrevit import revit, forms, script
+from Autodesk.Revit.DB import (
+    CategorySet,
+    InstanceBinding,
+    BuiltInParameterGroup
 )
 
-if not os.path.exists(sp_path):
-    with open(sp_path, "w") as f:
-        f.write("# BOQ Shared Parameters\n")
+output = script.get_output()
 
-app.SharedParametersFilename = sp_path
-sp_file = app.OpenSharedParameterFile()
+PARAM_NAME = "xy"
+SHARED_GROUP = "BOQ"
+PARAM_GROUP = BuiltInParameterGroup.PG_DATA  # Group parameter under
 
-if not sp_file:
-    forms.alert("Failed to open Shared Parameter file", exitscript=True)
+try:
+    doc = revit.doc
+    app = doc.Application
 
-# -------------------------------------------------
-# GET OR CREATE GROUP
-# -------------------------------------------------
-group = next((g for g in sp_file.Groups if g.Name == PARAM_GROUP_NAME), None)
-if not group:
-    group = sp_file.Groups.Create(PARAM_GROUP_NAME)
+    # Open shared parameter file
+    sp_file = app.OpenSharedParameterFile()
+    if not sp_file:
+        forms.alert(
+            "No shared parameter file is set.\n"
+            "Go to Manage → Shared Parameters and set one.",
+            exitscript=True
+        )
 
-# -------------------------------------------------
-# GET OR CREATE DEFINITION
-# -------------------------------------------------
-definition = next((d for d in group.Definitions if d.Name == PARAM_NAME), None)
+    # Get shared parameter definition
+    group = sp_file.Groups.get_Item(SHARED_GROUP)
+    if not group:
+        forms.alert(
+            "Shared parameter group '{}' not found.".format(SHARED_GROUP),
+            exitscript=True
+        )
 
-if not definition:
-    opts = ExternalDefinitionCreationOptions(PARAM_NAME, PARAM_SPEC)
-    opts.Visible = True
-    opts.UserModifiable = True
-    definition = group.Definitions.Create(opts)
+    definition = None
+    for d in group.Definitions:
+        if d.Name == PARAM_NAME:
+            definition = d
+            break
 
-# -------------------------------------------------
-# STRICT CURRENCY-SAFE CATEGORY WHITELIST
-# -------------------------------------------------
-ALLOWED_BICS = [
-    BuiltInCategory.OST_Walls,
-    BuiltInCategory.OST_Floors,
-    BuiltInCategory.OST_Roofs,
-    BuiltInCategory.OST_StructuralFraming,
-    BuiltInCategory.OST_StructuralColumns,
-    BuiltInCategory.OST_Doors,
-    BuiltInCategory.OST_Windows,
-    BuiltInCategory.OST_PlumbingFixtures,
-    BuiltInCategory.OST_MechanicalEquipment,
-    BuiltInCategory.OST_ElectricalFixtures,
-    BuiltInCategory.OST_ElectricalEquipment
-]
+    if not definition:
+        forms.alert(
+            "Shared parameter '{}' not found.".format(PARAM_NAME),
+            exitscript=True
+        )
 
-cat_set = app.Create.NewCategorySet()
+    # -------------------------------
+    # CATEGORY SELECTION (version-safe)
+    # -------------------------------
+    all_categories = [
+        c for c in doc.Settings.Categories
+        if c.AllowsBoundParameters
+    ]
 
-for bic in ALLOWED_BICS:
-    cat = doc.Settings.Categories.get_Item(bic)
-    if cat and cat.AllowsBoundParameters:
-        cat_set.Insert(cat)
+    cat_names = sorted([c.Name for c in all_categories])
 
-if cat_set.IsEmpty:
-    forms.alert("No valid categories found", exitscript=True)
+    selected_names = forms.SelectFromList.show(
+        cat_names,
+        title="Select categories for '{}'".format(PARAM_NAME),
+        multiselect=True
+    )
 
-# -------------------------------------------------
-# CREATE INSTANCE PROJECT PARAMETER
-# -------------------------------------------------
-binding = app.Create.NewInstanceBinding(cat_set)
+    if not selected_names:
+        forms.alert("No categories selected.", exitscript=True)
 
-with revit.Transaction("Create Project Parameter: xy (Currency)"):
-    doc.ParameterBindings.Insert(definition, binding, PARAM_GROUP)
+    cat_set = CategorySet()
+    for cat in all_categories:
+        if cat.Name in selected_names:
+            cat_set.Insert(cat)
 
-forms.alert("Currency instance parameter 'xy' created successfully")
+    # Instance binding
+    binding = InstanceBinding(cat_set)
+
+    # Bind parameter
+    with revit.Transaction("Add shared project parameter"):
+        success = doc.ParameterBindings.Insert(
+            definition,
+            binding,
+            PARAM_GROUP
+        )
+
+        if not success:
+            doc.ParameterBindings.ReInsert(
+                definition,
+                binding,
+                PARAM_GROUP
+            )
+
+    forms.alert(
+        "Shared parameter '{}' added as INSTANCE project parameter.".format(PARAM_NAME)
+    )
+
+except Exception as e:
+    output.print_md("## ❌ Failed to add project parameter")
+    output.print_md("```")
+    output.print_md(str(e))
+    output.print_md("```")
+    raise

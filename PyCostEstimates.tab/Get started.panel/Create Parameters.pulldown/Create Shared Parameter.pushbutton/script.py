@@ -1,92 +1,70 @@
-from Autodesk.Revit.DB import *
-from pyrevit import revit, forms
-import os
+# -*- coding: utf-8 -*-
 
-doc = revit.doc
-app = doc.Application
+from pyrevit import revit, forms, script
+
+# Revit API (version-safe)
+try:
+    # Revit 2022+
+    from Autodesk.Revit.DB import ExternalDefinitionCreationOptions, SpecTypeId
+    USE_SPEC_TYPE = True
+except ImportError:
+    # Revit 2021 and earlier
+    from Autodesk.Revit.DB import ExternalDefinitionCreationOptions, ParameterType
+    USE_SPEC_TYPE = False
+
 
 PARAM_NAME = "xy"
-PARAM_GROUP_NAME = "BOQ"
-PARAM_GROUP = BuiltInParameterGroup.PG_DATA
+GROUP_NAME = "BOQ"
 
-# -------------------------------------------------
-# DETERMINE PARAMETER SPEC (2019–2025 SAFE)
-# -------------------------------------------------
-if int(app.VersionNumber) >= 2022:
-    PARAM_SPEC = SpecTypeId.Currency
-else:
-    PARAM_SPEC = ParameterType.Currency  # fallback for 2019–2021
+output = script.get_output()
 
-# -------------------------------------------------
-# ENSURE SHARED PARAMETER FILE EXISTS
-# -------------------------------------------------
-sp_path = os.path.join(
-    os.environ["USERPROFILE"],
-    "Documents",
-    "SharedParameters_BOQ.txt"
-)
+try:
+    # ✅ THIS is the correct, universal way in pyRevit
+    app = revit.doc.Application
 
-if not os.path.exists(sp_path):
-    with open(sp_path, "w") as f:
-        f.write("# BOQ Shared Parameters\n")
+    sp_file = app.OpenSharedParameterFile()
+    if not sp_file:
+        forms.alert(
+            "No shared parameter file is set.\n"
+            "Go to Manage → Shared Parameters and set one.",
+            exitscript=True
+        )
 
-app.SharedParametersFilename = sp_path
-sp_file = app.OpenSharedParameterFile()
+    # Get or create group
+    group = sp_file.Groups.get_Item(GROUP_NAME)
+    if not group:
+        group = sp_file.Groups.Create(GROUP_NAME)
 
-if not sp_file:
-    forms.alert("Failed to open Shared Parameter file", exitscript=True)
+    # Check for duplicates
+    for definition in group.Definitions:
+        if definition.Name == PARAM_NAME:
+            forms.alert(
+                "Shared parameter '{}' already exists.".format(PARAM_NAME),
+                exitscript=True
+            )
 
-# -------------------------------------------------
-# GET OR CREATE GROUP
-# -------------------------------------------------
-group = next((g for g in sp_file.Groups if g.Name == PARAM_GROUP_NAME), None)
-if not group:
-    group = sp_file.Groups.Create(PARAM_GROUP_NAME)
+    # Create parameter (version-safe)
+    if USE_SPEC_TYPE:
+        options = ExternalDefinitionCreationOptions(
+            PARAM_NAME,
+            SpecTypeId.Number
+        )
+    else:
+        options = ExternalDefinitionCreationOptions(
+            PARAM_NAME,
+            ParameterType.Number
+        )
 
-# -------------------------------------------------
-# GET OR CREATE DEFINITION
-# -------------------------------------------------
-definition = next((d for d in group.Definitions if d.Name == PARAM_NAME), None)
+    options.Visible = True
+    group.Definitions.Create(options)
 
-if not definition:
-    opts = ExternalDefinitionCreationOptions(PARAM_NAME, PARAM_SPEC)
-    opts.Visible = True
-    opts.UserModifiable = True
-    definition = group.Definitions.Create(opts)
+    forms.alert(
+        "Shared parameter '{}' (Number) created successfully.".format(PARAM_NAME)
+    )
 
-# -------------------------------------------------
-# STRICT CURRENCY-SAFE CATEGORY WHITELIST
-# -------------------------------------------------
-ALLOWED_BICS = [
-    BuiltInCategory.OST_Walls,
-    BuiltInCategory.OST_Floors,
-    BuiltInCategory.OST_Roofs,
-    BuiltInCategory.OST_StructuralFraming,
-    BuiltInCategory.OST_StructuralColumns,
-    BuiltInCategory.OST_Doors,
-    BuiltInCategory.OST_Windows,
-    BuiltInCategory.OST_PlumbingFixtures,
-    BuiltInCategory.OST_MechanicalEquipment,
-    BuiltInCategory.OST_ElectricalFixtures,
-    BuiltInCategory.OST_ElectricalEquipment
-]
-
-cat_set = app.Create.NewCategorySet()
-
-for bic in ALLOWED_BICS:
-    cat = doc.Settings.Categories.get_Item(bic)
-    if cat and cat.AllowsBoundParameters:
-        cat_set.Insert(cat)
-
-if cat_set.IsEmpty:
-    forms.alert("No valid categories found", exitscript=True)
-
-# -------------------------------------------------
-# CREATE INSTANCE PROJECT PARAMETER
-# -------------------------------------------------
-binding = app.Create.NewInstanceBinding(cat_set)
-
-with revit.Transaction("Create Project Parameter: xy (Currency)"):
-    doc.ParameterBindings.Insert(definition, binding, PARAM_GROUP)
-
-forms.alert("Currency instance parameter 'xy' created successfully")
+except Exception as e:
+    output.print_md("## ❌ Failed to create shared parameter")
+    output.print_md("```")
+    output.print_md(str(e))
+    output.print_md("```")
+    raise
