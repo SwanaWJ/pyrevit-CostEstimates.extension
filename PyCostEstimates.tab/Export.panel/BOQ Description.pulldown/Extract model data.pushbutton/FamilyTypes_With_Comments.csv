@@ -10,13 +10,13 @@ Private - 6.1 Lpf,
 1360mm Opening using 907 Leaf,External Single
 800 x 2100mm,
 900 x 2000mm,Internal Single
-600 x 600,
+600 x 600,Included in BOQ
 800 mm x 600 mm,
 Interior door,
 2400 mm x 1400 mm,
 1600 mm x 1400 mm,
 M_Aluminium window,
-2400 mm x 1200 mm,
+2400 mm x 1200 mm,"Aluminium framed window, powder-coated finish, glazed and installed complete to BS EN 14351-1 and BS 8213-4, including ironmongery, sealing, fixings, and making good."
 Interior 900 mm x 2000 mm,
 800 mm x 2000 mm,
 3000 mm x 1600 mm,
@@ -79,7 +79,7 @@ M_450 x 600,
 M_600 x 750,
 300 x 300mm,
 450 x 450mm,
-600 x 600mm,
+600 x 600mm,Included in BOQ
 750 x 750mm,
 300mm,
 450mm,
@@ -104,4 +104,6 @@ Door panel,
 500x600,
 Complex door family,
 114x114,
-Sawn Timber 50x50mm,TEST 1234
+Sawn Timber 50x50mm,Check
+L80x80x8,
+L80x80x8,
