@@ -1,0 +1,19 @@
+title: "Export Material\nSchedule"
+
+tooltip: >
+  Generates a procurement-ready material list from the Revit model
+  based on defined material compositions of items.
+
+  Unlike a BOQ, which measures works (e.g. walls or slabs),
+  this tool produces a list of materials required to execute
+  those works, such as cement, blocks, sand, aggregates, etc.
+
+  Includes:
+  - Aggregated material quantities from all model elements
+  - Standard units of measurement (m, m², m³, No., kg, etc.)
+  - Quantities suitable for ordering and procurement
+
+  Author: Wachama J. Swana
+  Version: 1.0.0
+
+author: Wachama J. Swana

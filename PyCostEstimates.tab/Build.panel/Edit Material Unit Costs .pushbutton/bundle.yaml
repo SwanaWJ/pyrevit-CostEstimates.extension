@@ -1,0 +1,10 @@
+title: "Edit Material\nUnit Costs"
+
+tooltip: >
+  Opens the Material Unit Costs CSV file by searching upward
+  from the script directory.
+
+  Author: Wachama J. Swana
+  Version: 1.0.0
+
+author: Wachama J. Swana

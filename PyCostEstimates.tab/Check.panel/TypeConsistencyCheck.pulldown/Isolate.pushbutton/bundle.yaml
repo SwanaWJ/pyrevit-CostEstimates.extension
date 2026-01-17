@@ -1,0 +1,18 @@
+title: "Isolate"
+
+tooltip: >
+  Isolates and highlights elements in the model based on an
+  exact family type name.
+
+  This tool helps verify that the intended family types are
+  actually used in the model, avoiding errors caused by
+  similarly named or incorrectly assigned types.
+
+  Useful for QA/QC, BOQ preparation, and cost consistency
+  checks before quantity take-off.
+
+
+  Author: Wachama J. Swana
+  Version: 1.0.0
+
+author: Wachama J. Swana

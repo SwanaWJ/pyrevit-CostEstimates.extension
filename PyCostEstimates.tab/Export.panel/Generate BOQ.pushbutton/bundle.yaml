@@ -1,0 +1,18 @@
+title: "Export\nBOQ"
+
+tooltip: >
+  Generates a Bill of Quantities (BOQ) from the current Revit model
+  using applied material compositions and rates.
+
+  Includes:
+  - Element / item quantities with standard units of measurement
+    (m, m², m³, No., kg, etc.) in accordance with CESUM
+  - Composite and material costs
+  - Computes total cost per element or item by multiplying
+    quantities with the applied rates
+  - Ready for reporting or export
+
+  Author: Wachama J. Swana
+  Version: 1.0.0
+
+author: Wachama J. Swana

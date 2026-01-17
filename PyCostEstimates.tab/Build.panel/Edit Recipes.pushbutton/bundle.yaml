@@ -1,0 +1,14 @@
+title: "Edit Material\nBuildup"
+
+tooltip: >
+  Defines how composite items are built up from constituent
+  materials, labour, transport, plant, wastage, and profit.
+
+  This tool is used to configure item rate build-ups before
+  applying rates, computing amounts, or generating BOQs and
+  material lists.
+
+  Author: Wachama J. Swana
+  Version: 1.0.0
+
+author: Wachama J. Swana

@@ -1,0 +1,18 @@
+title: "Rename Family\nTypes"
+
+tooltip: >
+  Allows users to rename existing family types in the model
+  using pre-built build-up or composition names from a CSV file.
+
+  This tool helps standardise family naming by applying
+  predefined rate or build-up descriptions, avoiding the need
+  to create new families and saving significant modelling time.
+
+  Each build-up name can only be used once, preventing
+  duplicate assignments and maintaining data integrity
+  across the model.
+
+  Author: Wachama J. Swana
+  Version: 1.0.0
+
+author: Wachama J. Swana

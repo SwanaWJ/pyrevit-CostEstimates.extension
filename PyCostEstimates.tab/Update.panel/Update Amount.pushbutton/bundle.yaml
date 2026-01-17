@@ -1,0 +1,21 @@
+title: "Compute\nAmount"
+
+tooltip: >
+  Computes the amount for each item or material by multiplying
+  the extracted model quantity with the applied unit rate
+  (Quantity × Unit Rate).
+
+  The calculated value is written back into the model as a new
+  parameter named "Amount", embedded within the family or
+  constituent material.
+
+  Displays a summary of how many families or items were updated,
+  providing quick feedback on the scope of the operation.
+
+  Useful for validating quantities, rates, and resulting costs
+  directly within Revit, without generating a BOQ or exporting data.
+
+  Author: Wachama J. Swana
+  Version: 1.0.0
+
+author: Wachama J. Swana

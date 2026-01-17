@@ -1,0 +1,18 @@
+title: "Search\nFamily Type"
+
+tooltip: >
+  Searches the model for a specified family type name and
+  highlights all matching instances.
+
+  This tool helps confirm whether a particular family type
+  exists in the model and where it has been used, reducing
+  errors caused by missing, renamed, or incorrectly assumed
+  family types.
+
+  Useful during modelling QA, type validation, and before
+  BOQ or cost calculations.
+
+  Author: Wachama J. Swana
+  Version: 1.0.0
+
+author: Wachama J. Swana

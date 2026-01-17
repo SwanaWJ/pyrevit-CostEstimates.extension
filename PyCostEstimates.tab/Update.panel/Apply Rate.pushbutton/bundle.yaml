@@ -1,0 +1,15 @@
+title: "Apply\nRate"
+
+tooltip: >
+  Applies material unit rates and composite cost calculations
+  to Revit element types based on selected province and
+  Min / Avg / Max cost basis.
+
+  Updates:
+  - Type costs (materials, labour, transport, wastage, plant, profit)
+  - Paint and finish material costs
+
+  Author: Wachama J. Swana
+  Version: 1.0.0
+
+author: Wachama J. Swana

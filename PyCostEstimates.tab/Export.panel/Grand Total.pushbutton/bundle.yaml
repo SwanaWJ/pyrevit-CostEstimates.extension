@@ -1,0 +1,21 @@
+title: "Preview\nTotal"
+
+tooltip: >
+  Displays a quick snapshot of the total project cost directly
+  within Revit, without exporting any files.
+
+  Provides a clear cost summary grouped by major
+  subcategories, allowing rapid review and decision-making.
+
+  This tool can be used in place of Generate BOQ when a
+  high-level cost overview is required.
+
+  Includes:
+  - Total project cost
+  - Cost breakdown by key subcategories
+  - Fast in-model tabulated display
+
+  Author: Wachama J. Swana
+  Version: 1.0.0
+
+author: Wachama J. Swana

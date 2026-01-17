@@ -1,0 +1,432 @@
+Type,Component,Labour/Transport/Wastage/Profit,Labour/Transport/Plant_Fixed,Time/Distance,Rate,Quantity,BOQ UoM,Comment,,,,,,,
+Strip footing 600x200mm thick,Cement 42.5-50Kg,,,,,7,m3,,,,,,,,
+Strip footing 600x200mm thick,Building Sand,,,,,0.7,,,,,,,,,
+Strip footing 600x200mm thick,Quarry Dust (A),,,,,1.4,,,,,,,,,
+Strip footing 600x200mm thick,Labour ,25%,,,,1,,Labour @ 20% of material cost,,,,,,,
+Strip footing 600x200mm thick,Labour Skilled ,,100,,,,,,,,,,,,
+Strip footing 600x200mm thick,Labour Unskilled,,200,,,,,,Labour for ...,,,,,,
+Strip footing 600x200mm thick,Labour  Hours,,,1,200,,,,,,,,,,
+Strip footing 600x200mm thick,Transport ,7%,,,,1,,Transport @ 10% of material cost,Transport for ...,,,,,,
+Strip footing 600x200mm thick,Transport Fixed,,100,,,,,,,,,,,,
+Strip footing 600x200mm thick,Transport  Kilometres,,,1,100,,,,,,,,,,
+Strip footing 600x200mm thick,Wastage and Shrinkage losses,2%,,,,,,Test cubes & other losses,,,,,,,
+Strip footing 600x200mm thick,Plant and Equipment,0%,0,0,0,,,"Concrete Mixer, Pocker",,,,,,,
+Strip footing 600x200mm thick,Profit and Overheads,7%,,,,,,Profit and Overheads,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+Strip footing 450x150mm thick,Cement 42.5-50Kg,,,,,7,,,,,,,,,
+Strip footing 450x150mm thick,Building Sand,,,,,0.7,,,,,,,,,
+Strip footing 450x150mm thick,Quarry Dust (A),,,,,1.4,,,,,,,,,
+Strip footing 450x150mm thick,Labour ,25%,,,,1,,Labour @ 20% of material cost,,,,,,,
+Strip footing 450x150mm thick,Labour Skilled ,,100,,,,,,,,,,,,
+Strip footing 450x150mm thick,Labour Unskilled,,200,,,,,,Labour for ...,,,,,,
+Strip footing 450x150mm thick,Labour  Hours,,,1,200,,,,,,,,,,
+Strip footing 450x150mm thick,Transport ,7%,,,,1,,Transport @ 10% of material cost,Transport for ...,,,,,,
+Strip footing 450x150mm thick,Transport Fixed,,100,,,,,,,,,,,,
+Strip footing 450x150mm thick,Transport  Kilometres,,,1,100,,,,,,,,,,
+Strip footing 450x150mm thick,Wastage and Shrinkage losses,2%,,,,,,Test cubes & other losses,,,,,,,
+Strip footing 450x150mm thick,Plant and Equipment,0%,0,0,0,,,"Concrete Mixer, Pocker",,,,,,,
+Strip footing 450x150mm thick,Profit and Overheads,7%,,,,,,Profit and Overheads,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+Pad footing 1200x1200x300mm thick,Cement 42.5-50Kg,,,,,7,,Grade C25 or mix ratio 1:2:4,,,,,,,
+Pad footing 1200x1200x300mm thick,Quarry Dust (A),,,,,0.7,,6mm quarry dust ,,,,,,,
+Pad footing 1200x1200x300mm thick,Crushed Stones - 20mm,,,,,1.4,,,,,,,,,
+Pad footing 1200x1200x300mm thick,Labour ,25%,,,,1,,Labour @ 20% of material cost,,,,,,,
+Pad footing 1200x1200x300mm thick,Labour Skilled ,,100,,,,,,,,,,,,
+Pad footing 1200x1200x300mm thick,Labour Unskilled,,200,,,,,,Labour for ...,,,,,,
+Pad footing 1200x1200x300mm thick,Labour  Hours,,,1,200,,,,,,,,,,
+Pad footing 1200x1200x300mm thick,Transport ,7%,,,,1,,Transport @ 10% of material cost,Transport for ...,,,,,,
+Pad footing 1200x1200x300mm thick,Transport Fixed,,100,,,,,,,,,,,,
+Pad footing 1200x1200x300mm thick,Transport  Kilometres,,,1,100,,,,,,,,,,
+Pad footing 1200x1200x300mm thick,Wastage and Shrinkage losses,2%,,,,,,Test cubes & other losses,,,,,,,
+Pad footing 1200x1200x300mm thick,Plant and Equipment,0%,0,0,0,,,"Concrete Mixer, Pocker",,,,,,,
+Pad footing 1200x1200x300mm thick,Profit and Overheads,7%,,,,,,Profit and Overheads,,,,,,,
+,,,,,,,,,,,,,,,
+Foundation walls_200mm,Concrete Hollow Block - 8 Inch (200mm) thick,,,,,14.17,,blocks per sq.m with 5% waste per sq.m per 14.17 block,,,,,,,
+Foundation walls_200mm,Cement 42.5-50Kg,,,,,1,,cement for motar per sq.m with 40% shrinkage,,,,,,,
+Foundation walls_200mm,Brick force Wire 6 inch (150mm),,,,,3,,Conforce wire every 2 courses per sq.m,,,,,,,
+Foundation walls_200mm,Quarry Dust (A),,,,,0.15,,Sand for motor per cu.m,,,,,,,
+Foundation walls_200mm,Labour ,25%,,,,1,,Labour @ 20% of material cost,,,,,,,
+Foundation walls_200mm,Labour Skilled ,,0,,,,,,,,,,,,
+Foundation walls_200mm,Labour Unskilled,,0,,,,,,Labour for ...,,,,,,
+Foundation walls_200mm,Labour  Hours,,,0,0,,,,,,,,,,
+Foundation walls_200mm,Transport ,0%,,,,1,,Transport @ 10% of material cost,Transport for ...,,,,,,
+Foundation walls_200mm,Transport Fixed,,16.8,,,,,,,,,,,,
+Foundation walls_200mm,Transport  Kilometres,,,0,0,,,,,,,,,,
+Foundation walls_200mm,Wastage and Shrinkage losses,0%,,,,,,Test cubes & other losses,,,,,,,
+Foundation walls_200mm,Plant and Equipment,0%,0,0,0,,,"Concrete Mixer, Pocker",,,,,,,
+Foundation walls_200mm,Profit and Overheads,7%,,,,,,Profit and Overheads,,,,,,,
+,,,,,,,,,,,,,,,
+Foundation walls_150mm,Concrete Hollow Block - 8 Inch (200mm) thick,,,,,14.17,,blocks per sq.m with 5% waste per sq.m per 14.17 block,,,,,,,
+Foundation walls_150mm,Cement 42.5-50Kg,,,,,1,,cement for motar per sq.m with 40% shrinkage,,,,,,,
+Foundation walls_150mm,Brick force Wire 6 inch (150mm),,,,,3,,Conforce wire every 2 courses per sq.m,,,,,,,
+Foundation walls_150mm,Quarry Dust (A),,,,,0.15,,Sand for motor per cu.m,,,,,,,
+Foundation walls_150mm,Labour ,25%,,,,1,,Labour @ 20% of material cost,,,,,,,
+Foundation walls_150mm,Labour Skilled ,,0,,,,,,,,,,,,
+Foundation walls_150mm,Labour Unskilled,,0,,,,,,Labour for ...,,,,,,
+Foundation walls_150mm,Labour  Hours,,,0,0,,,,,,,,,,
+Foundation walls_150mm,Transport ,0%,,,,1,,Transport @ 10% of material cost,Transport for ...,,,,,,
+Foundation walls_150mm,Transport Fixed,,16.8,,,,,,,,,,,,
+Foundation walls_150mm,Transport  Kilometres,,,0,0,,,,,,,,,,
+Foundation walls_150mm,Wastage and Shrinkage losses,0%,,,,,,Test cubes & other losses,,,,,,,
+Foundation walls_150mm,Plant and Equipment,0%,0,0,0,,,"Concrete Mixer, Pocker",,,,,,,
+Foundation walls_150mm,Profit and Overheads,7%,,,,,,Profit and Overheads,,,,,,,
+,,,,,,,,,,,,,,,
+Concrete_slab_100mm,Cement 42.5-50Kg,,,,,7,,Grade C25 or mix ratio 1:2:4,,,for m3 of concrete grade C25 we need :,,,,cement in bags
+Concrete_slab_100mm,Quarry Dust (A),,,,,0.35,,6mm quarry dust ,,,,,,,Quarry dust in tons
+Concrete_slab_100mm,Crushed Stones - 20mm,,,,,0.7,,,,,,,,,Water in litres
+Concrete_slab_100mm,"Conforce wire - 257-4mm x 48 meterslength(Heavy Duty)",,,,,0.088,,,,,,,,,
+Concrete_slab_100mm,"Steel nails - 4 inches(Concrete Nails)",,,,,1,,,,,,,,,
+Concrete_slab_100mm,"Damp Proof Membrane(DPM) - Black plastic",,,,,0.2,,,,,,,,,
+Concrete_slab_100mm,"Timber - Sawn softwood 100 x 25mm x 5m",,,,,1,,,? Rule:,,,,,,
+Concrete_slab_100mm,Labour for Concrete slab,25%,,,,1,,Labour @ 20% of material cost,Always start component names clearly:,,,,,,
+Concrete_slab_100mm,Labour for Concrete slab Skilled ,,0,,,,,,,,,,,,
+Concrete_slab_100mm,Labour for Concrete slab Unskilled,,0,,,,,,Labour for ...,,,,,,
+Concrete_slab_100mm,Labour for Concrete slab Hours,,,0,0,,,,,,,,,,
+Concrete_slab_100mm,Transport for Concrete slab,7%,,,,1,,Transport @ 10% of material cost,Transport for ...,,,,,,
+Concrete_slab_100mm,Transport for Concrete slab Fixed,,10,,,,,,,,,,,,
+Concrete_slab_100mm,Transport for Concrete slab Kilometres,,,65,9.8,,,,,,,,,,
+Concrete_slab_100mm,Wastage and Shrinkage losses,2%,,,,,,Test cubes & other losses,,,,,,,
+Concrete_slab_100mm,Plant and Equipment,0%,0,0,0,,,"Concrete Mixer, Pocker",,,,,,,
+Concrete_slab_100mm,Profit and Overheads,7%,,,,,,Profit and Overheads,,,,,,,
+,,,,,,,,,,,,,,,
+Concrete_slab_150mm,Cement 42.5-50Kg,,,,,7,,Grade C25 or mix ratio 1:2:4,,,for m3 of concrete grade C25 we need :,,,,cement in bags
+Concrete_slab_150mm,Quarry Dust (A),,,,,0.35,,6mm quarry dust ,,,,,,,Quarry dust in tons
+Concrete_slab_150mm,Crushed Stones - 20mm,,,,,0.7,,,,,,,,,Water in litres
+Concrete_slab_150mm,Conforce wire - 257-4mm x 48 meters length(Heavy Duty),,,,,0.088,,,,,,,,,
+Concrete_slab_150mm,Steel nails - 4 inches (Concrete Nails),,,,,1,,,,,,,,,
+Concrete_slab_150mm,Damp Proof Membrane (DPM) - Black plastic,,,,,0.2,,,,,,,,,
+Concrete_slab_150mm,Timber - Sawn softwood 100 x 25mm x 5m,,,,,1,,,? Rule:,,,,,,
+Concrete_slab_150mm,Labour for Concrete slab,25%,,,,1,,Labour @ 20% of material cost,Always start component names clearly:,,,,,,
+Concrete_slab_150mm,Labour for Concrete slab Skilled ,,0,,,,,,,,,,,,
+Concrete_slab_150mm,Labour for Concrete slab Unskilled,,0,,,,,,Labour for ...,,,,,,
+Concrete_slab_150mm,Labour for Concrete slab Hours,,,0,0,,,,,,,,,,
+Concrete_slab_150mm,Transport for Concrete slab,7%,,,,1,,Transport @ 10% of material cost,Transport for ...,,,,,,
+Concrete_slab_150mm,Transport for Concrete slab Fixed,,10,,,,,,,,,,,,
+Concrete_slab_150mm,Transport for Concrete slab Kilometres,,,65,9.8,,,,,,,,,,
+Concrete_slab_150mm,Wastage and Shrinkage losses,2%,,,,,,Test cubes & other losses,,,,,,,
+Concrete_slab_150mm,Plant and Equipment,0%,0,0,0,,,"Concrete Mixer, Pocker",,,,,,,
+Concrete_slab_150mm,Profit and Overheads,7%,,,,,,Profit and Overheads,,,,,,,
+,,,,,,,,,,,,,,,
+Superstructure Walls_150mm,Concrete Hollow Block - 8 Inch (200mm) thick,,,,,14.17,,blocks per sq.m with 5% waste per sq.m per 14.17 block,,,,,,,
+Superstructure Walls_150mm,Cement 42.5-50Kg,,,,,1,,cement for motar per sq.m with 40% shrinkage,,,,,,,
+Superstructure Walls_150mm,Brick force Wire 6 inch (150mm),,,,,3,,Conforce wire every 2 courses per sq.m,,,,,,,
+Superstructure Walls_150mm,Quarry Dust (A),,,,,0.15,,Sand for motor per cu.m,,,,,,,
+Superstructure Walls_150mm,Labour ,25%,,,,1,,Labour @ 20% of material cost,,,,,,,
+Superstructure Walls_150mm,Labour Skilled ,,0,,,,,,,,,,,,
+Superstructure Walls_150mm,Labour Unskilled,,0,,,,,,Labour for ...,,,,,,
+Superstructure Walls_150mm,Labour  Hours,,,0,0,,,,,,,,,,
+Superstructure Walls_150mm,Transport ,0%,,,,1,,Transport @ 10% of material cost,Transport for ...,,,,,,
+Superstructure Walls_150mm,Transport Fixed,,16.8,,,,,,,,,,,,
+Superstructure Walls_150mm,Transport  Kilometres,,,0,0,,,,,,,,,,
+Superstructure Walls_150mm,Wastage and Shrinkage losses,0%,,,,,,Test cubes & other losses,,,,,,,
+Superstructure Walls_150mm,Plant and Equipment,5%,0,0,0,,,"Concrete Mixer, Pocker",,,,,,,
+Superstructure Walls_150mm,Profit and Overheads,7%,,,,,,Profit and Overheads,,,,,,,
+,,,,,,,,,,,,,,,
+Partition Walls_100mm,Concrete Hollow Block - 8 Inch (200mm) thick,,,,,14.17,,blocks per sq.m with 5% waste per sq.m per 14.17 block,,,,,,,
+Partition Walls_100mm,Cement 42.5-50Kg,,,,,1,,cement for motar per sq.m with 40% shrinkage,,,,,,,
+Partition Walls_100mm,Brick force Wire 6 inch (150mm),,,,,3,,Conforce wire every 2 courses per sq.m,,,,,,,
+Partition Walls_100mm,Quarry Dust (A),,,,,0.15,,Sand for motor per cu.m,,,,,,,
+Partition Walls_100mm,Labour ,25%,,,,1,,Labour @ 20% of material cost,,,,,,,
+Partition Walls_100mm,Labour Skilled ,,0,,,,,,,,,,,,
+Partition Walls_100mm,Labour Unskilled,,0,,,,,,Labour for ...,,,,,,
+Partition Walls_100mm,Labour  Hours,,,0,0,,,,,,,,,,
+Partition Walls_100mm,Transport ,0%,,,,1,,Transport @ 10% of material cost,Transport for ...,,,,,,
+Partition Walls_100mm,Transport Fixed,,16.8,,,,,,,,,,,,
+Partition Walls_100mm,Transport  Kilometres,,,0,0,,,,,,,,,,
+Partition Walls_100mm,Wastage and Shrinkage losses,5%,,,,,,Test cubes & other losses,,,,,,,
+Partition Walls_100mm,Plant and Equipment,0%,0,0,0,,,"Concrete Mixer, Pocker",,,,,,,
+Partition Walls_100mm,Profit and Overheads,7%,,,,,,Profit and Overheads,,,,,,,
+,,,,,,,,,,,,,,,
+"Steel window frame Overall size 600 x500mm high complete with burglar bars","Steel window frame Overall size 600 x500mm high complete with burglar bars",,,,,1,,,,,,,,,
+"Steel window frame Overall size 600 x500mm high complete with burglar bars",Window handle,,,,,1,,,,,,,,,
+"Steel window frame Overall size 600 x500mm high complete with burglar bars",Window hinge (pair),,,,,2,,,,,,,,,
+"Steel window frame Overall size 600 x500mm high complete with burglar bars",Window peg stay,,,,,1,,,,,,,,,
+,,,,,,,,,,,,,,,
+"Steel window frame Overall size 1200 x500mm high complete with burglar bars","Steel window frame Overall size 1200 x500mm high complete with burglar bars",,,,,1,,,,,,,,,
+"Steel window frame Overall size 1200 x500mm high complete with burglar bars",Window handle,,,,,1,,,,,,,,,
+"Steel window frame Overall size 1200 x500mm high complete with burglar bars",Window hinge (pair),,,,,2,,,,,,,,,
+"Steel window frame Overall size 1200 x500mm high complete with burglar bars",Window slide,,,,,1,,,,,,,,,
+,,,,,,,,,,,,,,,
+"Steel window frame Overall size 1200 x900mm high complete with burglar bars","Steel window frame Overall size 1200 x900mm high complete with burglar bars",,,,,1,,,,,,,,,
+"Steel window frame Overall size 1200 x900mm high complete with burglar bars",Window handle,,,,,1,,,,,,,,,
+"Steel window frame Overall size 1200 x900mm high complete with burglar bars",Window hinge (pair),,,,,2,,,,,,,,,
+"Steel window frame Overall size 1200 x900mm high complete with burglar bars",Window slide,,,,,1,,,,,,,,,
+,,,,,,,,,,,,,,,
+Window Frame_1200x1100mm Complete with burglar bars,"Steel window frame Overall size 1200 x1100mm high complete with burglar bars",,,,,1,,,,,,,,,
+Window Frame_1200x1100mm Complete with burglar bars,Window handle,,,,,1,,,,,,,,,
+Window Frame_1200x1100mm Complete with burglar bars,Window hinge (pair),,,,,2,,,,,,,,,
+Window Frame_1200x1100mm Complete with burglar bars,Window slide,,,,,1,,,,,,,,,
+,,,,,,,,,,,,,,,
+"Steel window frame Overall size 1800 x1100mm high complete with burglar bars","Steel window frame Overall size 1800 x1100mm high complete with burglar bars",,,,,1,,,,,,,,,
+"Steel window frame Overall size 1800 x1100mm high complete with burglar bars",Window handle,,,,,1,,,,,,,,,
+"Steel window frame Overall size 1800 x1100mm high complete with burglar bars",Window hinge (pair),,,,,2,,,,,,,,,
+"Steel window frame Overall size 1800 x1100mm high complete with burglar bars",Window slide,,,,,1,,,,,,,,,
+,,,,,,,,,,,,,,,
+"Steel window frame Overall size 1800 x900mm high complete with burglar bars","Steel window frame Overall size 1800 x900mm high complete with burglar bars",,,,,1,,,,,,,,,
+"Steel window frame Overall size 1800 x900mm high complete with burglar bars",Window handle,,,,,1,,,,,,,,,
+"Steel window frame Overall size 1800 x900mm high complete with burglar bars",Window hinge (pair),,,,,2,,,,,,,,,
+"Steel window frame Overall size 1800 x900mm high complete with burglar bars",Window slide,,,,,1,,,,,,,,,
+,,,,,,,,,,,,,,,
+"Steel window frame Overall size 2400 x1500mm high complete with burglar bars","Steel window frame Overall size 2400 x1500mm high complete with burglar bars",,,,,1,,,,,,,,,
+"Steel window frame Overall size 2400 x1500mm high complete with burglar bars",Window handle,,,,,1,,,,,,,,,
+"Steel window frame Overall size 2400 x1500mm high complete with burglar bars",Window hinge (pair),,,,,2,,,,,,,,,
+"Steel window frame Overall size 2400 x1500mm high complete with burglar bars",Window slide,,,,,1,,,,,,,,,
+,,,,,,,,,,,,,,,
+"Steel window frame Overall size 3000 x1500mm high complete with burglar bars","Steel window frame Overall size 3000 x1500mm high complete with burglar bars",,,,,1,,,,,,,,,
+"Steel window frame Overall size 3000 x1500mm high complete with burglar bars",Window handle,,,,,1,,,,,,,,,
+"Steel window frame Overall size 3000 x1500mm high complete with burglar bars",Window hinge (pair),,,,,2,,,,,,,,,
+"Steel window frame Overall size 3000 x1500mm high complete with burglar bars",Window slide,,,,,1,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+Cast in-situ Window sill with drip groove to Engineer's detail,Cement 42.5-50Kg,,,,,7,,,,,,,,,
+Cast in-situ Window sill with drip groove to Engineer's detail,Building Sand,,,,,0.7,,,,,,,,,
+Cast in-situ Window sill with drip groove to Engineer's detail,Quarry Dust (A),,,,,1.4,,,,,,,,,
+Cast in-situ Window sill with drip groove to Engineer's detail,"High tensile steel rod 12mm diameter deformed bars x12meters",,,,,16.67,,,,,,,,,
+Cast in-situ Window sill with drip groove to Engineer's detail,"High tensile steel rod 8mm diameter round bars x 12meters",,,,,5.5,,,,,,,,,
+Cast in-situ Window sill with drip groove to Engineer's detail,"Timber - Sawn softwood 100 x 25mm x 5m",,,,,20,,,,,,,,,
+Cast in-situ Window sill with drip groove to Engineer's detail,"Steel nails - 4 inches(Concrete Nails)",,,,,1,,,,,,,,,
+Cast in-situ Window sill with drip groove to Engineer's detail,Tying wire - 1.6mm 25Kg,,,,,0.08,,,,,,,,,
+Cast in-situ Window sill with drip groove to Engineer's detail,Labour ,25%,,,,1,,Labour @ 20% of material cost,,,,,,,
+Cast in-situ Window sill with drip groove to Engineer's detail,Labour Skilled ,,0,,,,,,,,,,,,
+Cast in-situ Window sill with drip groove to Engineer's detail,Labour Unskilled,,0,,,,,,Labour for ...,,,,,,
+Cast in-situ Window sill with drip groove to Engineer's detail,Labour  Hours,,,1,200,,,,,,,,,,
+Cast in-situ Window sill with drip groove to Engineer's detail,Transport ,15%,,,,1,,Transport @ 10% of material cost,Transport for ...,,,,,,
+Cast in-situ Window sill with drip groove to Engineer's detail,Transport Fixed,,0,,,,,,,,,,,,
+Cast in-situ Window sill with drip groove to Engineer's detail,Transport  Kilometres,,,0,0,,,,,,,,,,
+Cast in-situ Window sill with drip groove to Engineer's detail,Wastage and Shrinkage losses,2%,,,,,,Test cubes & other losses,,,,,,,
+Cast in-situ Window sill with drip groove to Engineer's detail,Plant and Equipment,0%,0,0,0,,,"Concrete Mixer, Pocker",,,,,,,
+Cast in-situ Window sill with drip groove to Engineer's detail,Profit and Overheads,5%,,,,,,Profit and Overheads,,,,,,,
+,,,,,,,,,,,,,,,
+"Steel door frame 600 x2000 mm complete with grill door","Steel door frame 600 x2000 mm complete with grill door",,,,,1,,,,,,,,,
+,0,,,,,,,,,,,,,,
+,0,,,,,,,,,,,,,,
+"Steel door frame 700 x2000 mm complete with grill door","Steel door frame 700 x2000 mm complete with grill door",,,,,1,,,,,,,,,
+,0,,,,,,,,,,,,,,
+,0,,,,,,,,,,,,,,
+"Steel door frame 800 x2000mm complete with grill gate","Steel door frame 800 x2000mm complete with grill gate",,,,,1,,,,,,,,,
+,0,,,,,,,,,,,,,,
+,0,,,,,,,,,,,,,,
+"Steel door frame 900 x2000 mm complete with grill door","Steel door frame 900 x2000 mm complete with grill door",,,,,1,,,,,,,,,
+,0,,,,,,,,,,,,,,
+,0,,,,,,,,,,,,,,
+"Steel door frame 900 x2200 mm with fanlight complete with grill door","Steel door frame 900 x2200 mm with fanlight complete with grill door",,,,,1,,,,,,,,,
+,0,,,,,,,,,,,,,,
+,0,,,,,,,,,,,,,,
+"Steel door frame 1200 x2000 mm complete with grill door","Steel door frame 1200 x2000 mm complete with grill door",,,,,1,,,,,,,,,
+,0,,,,,,,,,,,,,,
+,0,,,,,,,,,,,,,,
+"Steel door frame 1800 x2000 mm complete with grill door","Steel door frame 1800 x2000 mm complete with grill door",,,,,1,,,,,,,,,
+,,,,,,,,,,,,,,,
+"Door - 525 x 1960 x44mm Mukwa Door",,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+"Door - 525 x 1960 x44mm semi solid CoreFlush Door",,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+"Door - 525 x 1960 x44mm thick Flush Door",,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+"Door - 625 x 1960 x44mm Mukwa Door",,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+"Door - 625 x 1960 x44mm Semi Solid CoreFlush Door",,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+"Door - 625 x 1960 x44mm Thick Flush Door",,,,,,,,,,,,,,,
+"Door - 725 x 1960 x 44mm semi solid CoreFlush Door",,,,,,,,,,,,,,,
+"Door - 725 x 1960 x 44mm Thick Flush Door",,,,,,,,,,,,,,,
+"Door - 725 x 1960 x44mm Thick MukwaDoor",,,,,,,,,,,,,,,
+"Door - 825 x 1960 x 44mm Semi Solid CoreFlush Door",,,,,,,,,,,,,,,
+"Door - 825 x 1960 x 44mm Thick Flush Door",,,,,,,,,,,,,,,
+"Door - 825 x 1960 x 44mm Thick Rosewoodveneered H/C Door",,,,,,,,,,,,,,,
+"Door - 825 x 1960 x44mm Thick MukwaDoor",,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+"Equal Angles 25 x 25 x3mm angle iron x 6metres","Equal Angles 25 x 25 x3mm angle iron x 6metres",,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+"Equal Angles 30 x 30 x3mm angle iron x 6metres","Equal Angles 30 x 30 x3mm angle iron x 6metres",,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+"Equal Angles 40 x 40 x5mm angle iron x 6metres","Equal Angles 40 x 40 x5mm angle iron x 6metres",,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+"Equal Angles 50 x 50 x5mm angle iron x 6metres","Equal Angles 50 x 50 x5mm angle iron x 6metres",,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+"Equal Angles 60 x 60 x5mm angle iron x 6metres","Equal Angles 60 x 60 x5mm angle iron x 6metres",,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+"Equal Angles 70 x 70 x8mm angle iron x 6metres","Equal Angles 70 x 70 x8mm angle iron x 6metres",,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+"Equal Angles 80 x 80 x8mm angle iron x 6metres","Equal Angles 80 x 80 x8mm angle iron x 6metres",,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+"Equal Angles 90 x 90 x8mm angle iron x 6metres","Equal Angles 90 x 90 x8mm angle iron x 6metres",,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+Reinforced Concrete Ring Beam_100x200mm,Cement 42.5-50Kg,,,,,7,,,,,,,,,
+Reinforced Concrete Ring Beam_100x200mm,Building Sand,,,,,0.7,,,,,,,,,
+Reinforced Concrete Ring Beam_100x200mm,Quarry Dust (A),,,,,1.4,,,,,,,,,
+Reinforced Concrete Ring Beam_100x200mm,"High tensile steel rod 12mm diameter deformed bars x12meters",,,,,16.67,,,,,,,,,
+Reinforced Concrete Ring Beam_100x200mm,"High tensile steel rod 8mm diameter round bars x 12meters",,,,,5.5,,,,,,,,,
+Reinforced Concrete Ring Beam_100x200mm,"Timber - Sawn softwood 100 x 25mm x 5m",,,,,20,,,,,,,,,
+Reinforced Concrete Ring Beam_100x200mm,"Steel nails - 4 inches(Concrete Nails)",,,,,1,,,,,,,,,
+Reinforced Concrete Ring Beam_100x200mm,Tying wire - 1.6mm 25Kg,,,,,0.08,,,,,,,,,
+Reinforced Concrete Ring Beam_100x200mm,Labour ,25%,,,,1,,Labour @ 20% of material cost,,,,,,,
+Reinforced Concrete Ring Beam_100x200mm,Labour Skilled ,,0,,,,,,,,,,,,
+Reinforced Concrete Ring Beam_100x200mm,Labour Unskilled,,0,,,,,,Labour for ...,,,,,,
+Reinforced Concrete Ring Beam_100x200mm,Labour  Hours,,,1,200,,,,,,,,,,
+Reinforced Concrete Ring Beam_100x200mm,Transport ,15%,,,,1,,Transport @ 10% of material cost,Transport for ...,,,,,,
+Reinforced Concrete Ring Beam_100x200mm,Transport Fixed,,0,,,,,,,,,,,,
+Reinforced Concrete Ring Beam_100x200mm,Transport  Kilometres,,,0,0,,,,,,,,,,
+Reinforced Concrete Ring Beam_100x200mm,Wastage and Shrinkage losses,2%,,,,,,Test cubes & other losses,,,,,,,
+Reinforced Concrete Ring Beam_100x200mm,Plant and Equipment,0%,0,0,0,,,"Concrete Mixer, Pocker",,,,,,,
+Reinforced Concrete Ring Beam_100x200mm,Profit and Overheads,5%,,,,,,Profit and Overheads,,,,,,,
+,,,,,,,,,,,,,,,
+Ring Beam_150x200mm,Cement 42.5-50Kg,,,,,7,,,,,,,,,
+Ring Beam_150x200mm,Building Sand,,,,,0.7,,,,,,,,,
+Ring Beam_150x200mm,Quarry Dust (A),,,,,1.4,,,,,,,,,
+Ring Beam_150x200mm,Labour ,25%,,,,1,,Labour @ 20% of material cost,,,,,,,
+Ring Beam_150x200mm,Labour Skilled ,,100,,,,,,,,,,,,
+Ring Beam_150x200mm,Labour Unskilled,,200,,,,,,Labour for ...,,,,,,
+Ring Beam_150x200mm,Labour  Hours,,,1,200,,,,,,,,,,
+Ring Beam_150x200mm,Transport ,7%,,,,1,,Transport @ 10% of material cost,Transport for ...,,,,,,
+Ring Beam_150x200mm,Transport Fixed,,100,,,,,,,,,,,,
+Ring Beam_150x200mm,Transport  Kilometres,,,1,100,,,,,,,,,,
+Ring Beam_150x200mm,Wastage and Shrinkage losses,2%,,,,,,Test cubes & other losses,,,,,,,
+Ring Beam_150x200mm,Plant and Equipment,0%,0,0,0,,,"Concrete Mixer, Pocker",,,,,,,
+Ring Beam_150x200mm,Profit and Overheads,7%,,,,,,Profit and Overheads,,,,,,,
+,,,,,,,,,,,,,,,
+Ring Beam_200x200mm,Cement 42.5-50Kg,,,,,7,,,,,,,,,
+Ring Beam_200x200mm,Building Sand,,,,,0.7,,,,,,,,,
+Ring Beam_200x200mm,Quarry Dust (A),,,,,1.4,,,,,,,,,
+Ring Beam_200x200mm,Labour ,25%,,,,1,,Labour @ 20% of material cost,,,,,,,
+Ring Beam_200x200mm,Labour Skilled ,,100,,,,,,,,,,,,
+Ring Beam_200x200mm,Labour Unskilled,,200,,,,,,Labour for ...,,,,,,
+Ring Beam_200x200mm,Labour  Hours,,,1,200,,,,,,,,,,
+Ring Beam_200x200mm,Transport ,7%,,,,1,,Transport @ 10% of material cost,Transport for ...,,,,,,
+Ring Beam_200x200mm,Transport Fixed,,100,,,,,,,,,,,,
+Ring Beam_200x200mm,Transport  Kilometres,,,1,100,,,,,,,,,,
+Ring Beam_200x200mm,Wastage and Shrinkage losses,2%,,,,,,Test cubes & other losses,,,,,,,
+Ring Beam_200x200mm,Plant and Equipment,0%,0,0,0,,,"Concrete Mixer, Pocker",,,,,,,
+Ring Beam_200x200mm,Profit and Overheads,7%,,,,,,Profit and Overheads,,,,,,,
+,,,,,,,,,,,,,,,
+Air vents - PVC made,Air vents - PVC made,,,,,1,,,,,,,,,
+,,,,,,,,,,,,,,,
+"Curtain Single Track -2m","Curtain Single Track -2m",,,1,,,,,,,,,,,
+Curtain Steel Rod - 2.5m,Curtain Steel Rod - 2.5m,,,1,,,,,,,,,,,
+Curtain Steel Rod - 3m,Curtain Steel Rod - 3m,,,1,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+2400 mm x 1200 mm,0,,,,,5,,,,,,,,,
+TK,0,,,,,5,,,,,,,,,
+Lipped Channel 150x50x20x3mm,Lipped Channels 150 x 50 x 20 x 3mm 12m,,,,,0.083333333,,,,,,,,,
+,,,,,,,,,,,,,,,
+UC152x152x23,Cement 42.5-50Kg,,,,,12,,,,,,,,,
+UC152x152x24,Quarry Dust (A),,,,,0.3,,,,,,,,,
+UC152x152x25,Crushed Stones - 20mm,,,,,0.7,,,,,,,,,
+,CrushedStone,,,,,0.7,,,,,,,,,
+,,,,,,,,,,,,,,,
+300 x 300mm,Cement 42.5-50Kg,,,,,12,,,,,,,,,
+301 x 300mm,Quarry Dust (A),,,,,0.3,,,,,,,,,
+302 x 300mm,Crushed Stones - 20mm,,,,,0.7,,,,,,,,,
+303 x 300mm,CrushedStone,,,,,0.7,,,,,,,,,
+,,,,,,,,,,,,,,,
+C1,CrushedStone,,,,,0.7,,,,,,,,,
+C1,Cement_50kg bag,,,,,12,,,,,,,,,
+C1,Quarry dust,,,,,0.3,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+Switch,Switch - 1 gang - PVC,,,,,1,,,,,,,,,
+Switch,Labour for fitting switch,20%,,,,1,,Labour @ 20% of material cost,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+A,Air Conditioner 9000 BTU Wall Mount Split type,,,,,1,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+Conduitpipes - 25mm (Heavy Duty),"Conduitpipes - 4m x25mm x 25 pcs PVC(Heavy Duty)",,,,,0.01,,,,,,,,,
+,,,,,,,,,,,,,,,
+Fluorescent Double Fitting - 4 ft ,Fluorescent Double Fitting - 4 ft (1219mm),,,,,1,,,,,,,,,
+,,,,,,,,,,,,,,,
+Socket - Single outlet - PVC,Socket - Single outlet - PVC,,,,,1,,,,,,,,,
+,,,,,,,,,,,,,,,
+Looping box - PVC 4 way,Looping box - PVC 4 way,,,,,1,,,,,,,,,
+,,,,,,,,,,,,,,,
+Timber - Sawn softwood 50 x 50mm,Timber - Sawn softwood 50 x 50mm x 5m,,,,,0.2,,,,,,,,,
+,,,,,,,,,,,,,,,
+PVC Ceiling,Ceiling - PVC Ceiling,,,,,1,,,,,,,,,
+,,,,,,,,,,,,,,,
+Window,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+Glass - 4mm thick clear glass,Glass - 4mm thick clear glass,,,,,1,,,,,,,,,
+Glass - 4mm thick clear glass,Window Putty,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+Glass - 4mm thick obscure glass,Glass - 4mm thick obscure glass,,,,,1,,,,,,,,,
+Glass - 4mm thick obscure glass,Window Putty,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+Glass - 6mm thick clear glass,Glass - 6mm thick clear glass,,,,,1,,,,,,,,,
+Glass - 6mm thick clear glass,Window Putty,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+Glass - 6mm thick Georgian wire glass,Glass - 6mm thick Georgian wire glass,,,,,1,,,,,,,,,
+Glass - 6mm thick Georgian wire glass,Window Putty,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+Glass - 6mm thick obscure glass,Glass - 6mm thick obscure glass,,,,,1,,,,,,,,,
+Glass - 6mm thick obscure glass,Window Putty,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+Glass - 8mm thick obscure glass,Glass - 8mm thick obscure glass,,,,,1,,,,,,,,,
+Glass - 8mm thick obscure glass,Window Putty,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+Door - 825 x 1960 x 44mm Thick Mukwa Door,"Door - 825 x 1960 x44mm Thick MukwaDoor",,,,,1,,,,,,,,,
+Door - 825 x 1960 x 44mm Thick Mukwa Door,"Steel door frame 900 x2000 mm complete with grill door",,,,,1,,,,,,,,,
+Door - 825 x 1960 x 44mm Thick Mukwa Door,"Three lever mortice doorlockset",,,,,1,,,,,,,,,
+,,,,,,,,,,,,,,,
+T,"Tiles - 600 x 600mm x10mm Ceramic-NonSlippery",,,,,0.25,,,,,,,,,
+,,,,,,,,,,,,,,,
+Distribution Board,Main Circuit Breaker (MCB) 5 Amp,,,,,1,,,,,,,,,
+Distribution Board,Main Circuit Breaker (MCB) 10 Amp,,,,,1,,,,,,,,,
+Distribution Board,Main Circuit Breaker (MCB) 30 Amp,,,,,1,,,,,,,,,
+Distribution Board,Main Circuit Breaker (MCB) 60 Amp,,,,,1,,,,,,,,,
+Distribution Board,Distribution box 8 way - GI (Local),,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+Toilet Cistern (Ceramic) - 9 Litres,Toilet Cistern (Ceramic) - 9 Litres,,,,,1,,,,,,,,,
+,,,,,,,,,,,,,,,
+Urinal bowl - Ceramic (Manual),Urinal bowl - Ceramic (Manual),,s,,,1,,,,,,,,,
+,,,,,,,,,,,,,,,
+Waste pipe (PVC) - 50mm diameter,Waste pipe (PVC) - 50mm diameter (2 inches) -6m,,,,,0.166666667,,,,,,,,,
+,,,,,,,,,,,,,,,
+Y bend,Bend - 32mm (1 ¼ Inch) Diameter PVC plain,,,,,1,,,,,,,,,
+,,,,,,,,,,,,,,,
+Gate valve - 13mm (½ inch) - PVC,Gate valve - 13mm (½ inch) - PVC,,,,,1,,,,,,,,,
+,,,,,,,,,,,,,,,
+Roofing sheet 0.4mm thick IBR/IT4 colour coated sheet,Roofing sheet 0.4mm thick IBR/IT4 colour coated sheet,,,,,1.4577,,,,,,,,,
+,,,,,,,,,,,,,,,
+Fire Extinguisher - 6 litre Water (H20),Fire Extinguisher - 6 litre Water (H20),,,,,1,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+Fascia board,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+Does it work,,,,,,,,,,,,,,,
