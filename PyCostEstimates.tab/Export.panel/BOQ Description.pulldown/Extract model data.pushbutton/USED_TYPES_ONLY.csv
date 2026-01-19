@@ -1,0 +1,32 @@
+Category ID,Category,Type,Type Comments
+-2001330,Structural Columns,300 x 300mm,
+-2001330,Structural Columns,L50x50x5,
+-2001320,Structural Framing,L20x20x3,
+-2001320,Structural Framing,Reinforced Concrete Ring Beam_100x200mm,
+-2001320,Structural Framing,Timber - Sawn softwood 50 x 50mm,
+-2001300,Structural Foundations,Concrete_slab_100mm,"Reinforced in-situ concrete slab, Grade C25, reinforced with Conforce 257 mesh including laps and joints, with formwork to edges, damp-proof membrane and anti-guard membrane turned up 50 mm, complete, compacted by vibration and cured to BS EN 206 / BS 8500."
+-2001300,Structural Foundations,Pad footing 1200x1200x300mm thick,
+-2001300,Structural Foundations,Strip footing 600x200mm thick,"In-situ concrete strip footing, Grade C25, including mixing, placing, vibration, finishing and curing, complete, to BS EN 206 / BS 8500."
+-2001160,Plumbing Fixtures,1000x500x120mm,
+-2001160,Plumbing Fixtures,20 mm Flush Valve,
+-2001160,Plumbing Fixtures,400x400x150mm,Small corner sink of dimensions indicated above
+-2001160,Plumbing Fixtures,660x560x120mm,
+-2001160,Plumbing Fixtures,Toilet Cistern (Ceramic) - 9 Litres,
+-2001040,Electrical Equipment,Distribution Board,"1 No. 63A TP MCB incomer
+2 No. 32A SP MCB
+3 No. 10A SP MCB
+3 No.  SP MCB spares
+6A Bypass switch
+Lightning Arresters
+Neutral Bar
+Earth bar
+16mm dia copper Earth Rod- 2400mm long"
+-2000151,Generic Models,T,"Tiles to BS 5385, bedded in thick cement-sand mortar with neat joints aligned both directions. Grout to BS EN 13888, movement joints formed as per code. Edges mitred or trimmed with stainless steel trim. Substrate cleaned and primed before tiling."
+-2000023,Doors,Door - 825 x 1960 x 44mm Thick Mukwa Door,"Supply and fix solid hardwood door, min. 44 mm thick, complete with matching hardwood frame, ironmongery and finish, accurately machined and neatly finished, all to BS 936 and BS 1213."
+-2000023,Doors,Double Reabat door frame,
+-2000023,Doors,Three lever mortice door lockset,
+-2000014,Windows,Window Frame_1200x1100mm Complete with burglar bars,
+-2000011,Walls,Foundation walls_200mm,"Solid filled foundation walls in approved hollow concrete masonry unit minimum compresive strength of 4N/mm2, laid in cement–sand mortar, incorporating galvanised brick force wire reinforcement at every alternate course, complete with all necessary cutting, bonding, filling, and curing. Walls to be fully solid filled, finished internally with cement–sand plaster and externally coated with bituminous waterproofing paint to resist moisture penetration, executed strictly in accordance with BS EN 771, BS 5628 / BS EN 1996 (Eurocode 6), and all relevant British Standards and Engineer’s details."
+-2000011,Walls,Partition Walls_100mm,"Superstructure walling constructed of 100 mm thick hollow concrete blocks with a minimum compressive strength of 4 MPa, manufactured and tested in accordance with BS EN 771-3, laid in cement–sand mortar (1:4 or as specified) complying with BS EN 998-2, including mortar joints, proper bonding, cutting, and forming of openings; incorporating galvanized brick force wire reinforcement to BS EN 845-1 placed in horizontal mortar joints at every two courses; provision and installation of damp proof course to BS 6515 (or BS EN 14909) to all blockwork laid on concrete slabs; raking out joints where required, curing, scaffolding, and all incidental works, complete in accordance with drawings, specifications, and the Engineer’s instructions."
+-2000011,Walls,Storefront,
+-2000011,Walls,Superstructure Walls_150mm,"Superstructure walling constructed of 150mm thick hollow concrete blocks with a minimum compressive strength of 4 MPa, laid in cement–sand mortar (1:4 or as specified), including mortar joints, proper bonding, cutting, forming of openings, reinforcement where indicated, raking out joints where required, curing, scaffolding, and all incidental works, complete in accordance with drawings, specifications, and engineer’s instructions."
