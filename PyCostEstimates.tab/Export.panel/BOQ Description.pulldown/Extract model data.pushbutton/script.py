@@ -5,6 +5,7 @@ import os
 import codecs
 
 from Autodesk.Revit.DB import *
+from Autodesk.Revit.DB.Architecture import RailingType
 from pyrevit import revit
 
 doc = revit.doc
@@ -27,14 +28,13 @@ ALLOWED_CAT_IDS = {
     int(BuiltInCategory.OST_ElectricalFixtures),
     int(BuiltInCategory.OST_GenericModel),
 
-    # ✅ ADDED (VERTICAL CIRCULATION)
     int(BuiltInCategory.OST_Stairs),
     int(BuiltInCategory.OST_Ramps),
     int(BuiltInCategory.OST_Railings),
 }
 
 # ---------------------------------------
-# OUTPUT (SINGLE SOURCE OF TRUTH)
+# OUTPUT
 # ---------------------------------------
 script_dir = os.path.dirname(__file__)
 output_path = os.path.join(script_dir, "USED_TYPES_ONLY.csv")
@@ -59,6 +59,22 @@ for el in FilteredElementCollector(doc).WhereElementIsNotElementType():
 
     except Exception:
         continue
+
+# ---------------------------------------
+# ADD RAILING TYPES (SYSTEM FAMILY QUIRK)
+# ---------------------------------------
+try:
+    railing_types = (
+        FilteredElementCollector(doc)
+        .OfClass(RailingType)
+        .ToElements()
+    )
+
+    for rt in railing_types:
+        used_type_ids.add(rt.Id)
+
+except Exception:
+    pass
 
 # ---------------------------------------
 # STEP 2 — RESOLVE TYPES
@@ -92,12 +108,12 @@ for type_id in used_type_ids:
     ])
 
 # ---------------------------------------
-# SORT → CATEGORY A–Z, THEN TYPE A–Z
+# SORT
 # ---------------------------------------
 rows.sort(key=lambda r: (r[0].lower(), r[1].lower()))
 
 # ---------------------------------------
-# WRITE CSV (OVERWRITE INTENTIONALLY)
+# WRITE CSV
 # ---------------------------------------
 with codecs.open(output_path, "w", encoding="utf-8") as f:
     writer = csv.writer(f)
