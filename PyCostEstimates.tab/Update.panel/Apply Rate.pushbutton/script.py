@@ -162,7 +162,7 @@ with open(recipes_csv, "r") as f:
             continue
 
 # ---------------------------------------------------------------------
-# Categories (UNCHANGED)
+# Categories (UNCHANGED except additions)
 # ---------------------------------------------------------------------
 CATEGORIES = [
     DB.BuiltInCategory.OST_Walls,
@@ -185,7 +185,13 @@ CATEGORIES = [
     DB.BuiltInCategory.OST_PipeAccessory,
     DB.BuiltInCategory.OST_GenericModel,
     DB.BuiltInCategory.OST_SpecialityEquipment,
+
+    # ✅ ADDED
+    DB.BuiltInCategory.OST_Stairs,
+    DB.BuiltInCategory.OST_Ramps,
+    DB.BuiltInCategory.OST_Railings,
 ]
+
 
 type_elements = []
 for cat in CATEGORIES:
