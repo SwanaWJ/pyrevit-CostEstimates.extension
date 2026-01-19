@@ -17,7 +17,7 @@ ALLOWED_CATEGORIES = [
     BuiltInCategory.OST_Roofs,
     BuiltInCategory.OST_StructuralFraming,
     BuiltInCategory.OST_StructuralColumns,
-    BuiltInCategory.OST_StructuralFoundation,  # ✅ ADDED
+    BuiltInCategory.OST_StructuralFoundation,
     BuiltInCategory.OST_Doors,
     BuiltInCategory.OST_Windows,
     BuiltInCategory.OST_PlumbingFixtures,
@@ -36,7 +36,7 @@ script_dir = os.path.dirname(__file__)
 output_path = os.path.join(script_dir, "FamilyTypes_With_Comments.csv")
 
 # ---------------------------------------
-# COLLECT *ALL* ELEMENT TYPES (SYSTEM + LOADABLE)
+# COLLECT ALL ELEMENT TYPES
 # ---------------------------------------
 collector = FilteredElementCollector(doc).OfClass(ElementType)
 rows = []
@@ -47,8 +47,11 @@ for etype in collector:
         if not cat:
             continue
 
-        if cat.Id.IntegerValue not in ALLOWED_CAT_IDS:
+        cat_id = cat.Id.IntegerValue
+        if cat_id not in ALLOWED_CAT_IDS:
             continue
+
+        cat_name = cat.Name
 
         type_name = etype.get_Parameter(
             BuiltInParameter.SYMBOL_NAME_PARAM
@@ -60,17 +63,32 @@ for etype in collector:
         comment_param = etype.LookupParameter("Type Comments")
         type_comments = comment_param.AsString() if comment_param else ""
 
-        rows.append([type_name, type_comments or ""])
+        rows.append([
+            cat_id,
+            cat_name,
+            type_name,
+            type_comments or ""
+        ])
 
     except Exception:
         continue
+
+# ---------------------------------------
+# SORT → NUMERIC CATEGORY ID, THEN A–Z
+# ---------------------------------------
+rows.sort(key=lambda r: (r[0], r[1].lower(), r[2].lower()))
 
 # ---------------------------------------
 # WRITE UTF-8 CSV
 # ---------------------------------------
 with codecs.open(output_path, "w", encoding="utf-8") as csvfile:
     writer = csv.writer(csvfile)
-    writer.writerow(["Type", "Type Comments"])
+    writer.writerow([
+        "Category ID",
+        "Category",
+        "Type",
+        "Type Comments"
+    ])
     writer.writerows(rows)
 
 print("CSV created successfully")
