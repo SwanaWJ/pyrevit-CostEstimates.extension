@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
 """
-Material List Tool - FINAL
+Material List Tool - FINAL (Fixed)
 Stage 1: Extract Revit quantities
-Stage 2: Match recipes.csv (Type → Component)
+Stage 2: Match recipes.csv (Type -> Component)
 Stage 3: Resolve unit costs (Item)
 Stage 4: Calculate quantities GROUPED BY TYPE
 Stage 5: Export grouped CSV (QS format)
@@ -54,37 +54,57 @@ from Autodesk.Revit.DB import *
 import System
 import os
 import csv
+import shutil
 from collections import defaultdict
 
 doc = __revit__.ActiveUIDocument.Document
 
 # ------------------------------------------------------------
-# FILE PATHS (FIXED)
+# PATHS (FIXED + FIRST-RUN SAFE)
 # ------------------------------------------------------------
 
-BASE_DIR = os.path.dirname(__file__)
+# Folder where THIS button script lives
+SCRIPT_DIR = os.path.dirname(__file__)
 
-RECIPES_CSV = os.path.abspath(os.path.join(
-    BASE_DIR, "..", "..",
-    "Rate.panel", "Rate.pushbutton",
-    "recipes.csv"
-))
+# Template CSVs shipped with the button
+TEMPLATE_RECIPES = os.path.join(SCRIPT_DIR, "recipes.csv")
+TEMPLATE_UNIT_COSTS = os.path.join(SCRIPT_DIR, "material_unit_costs.csv")
 
-UNIT_COSTS_CSV = os.path.abspath(os.path.join(
-    BASE_DIR, "..", "..",
-    "Rate.panel", "Rate.pushbutton",
-    "material_unit_costs.csv"
-))
+# User-writable location
+USER_ROOT = os.path.join(
+    os.path.expanduser("~"),
+    "Documents",
+    "PyCostEstimates"
+)
 
-if not os.path.exists(UNIT_COSTS_CSV):
-    forms.alert(
-        "Unit cost file not found:\n\n{}".format(UNIT_COSTS_CSV),
-        title="Missing Unit Cost CSV"
-    )
-    script.exit()
+USER_RECIPES = os.path.join(USER_ROOT, "recipes.csv")
+USER_UNIT_COSTS = os.path.join(USER_ROOT, "material_unit_costs.csv")
+
+def ensure_user_csv(template_path, user_path, title):
+    if not os.path.exists(template_path):
+        forms.alert(
+            "{} template is missing:\n{}".format(title, template_path),
+            exitscript=True
+        )
+
+    if not os.path.exists(USER_ROOT):
+        os.makedirs(USER_ROOT)
+
+    if not os.path.exists(user_path):
+        shutil.copy(template_path, user_path)
+        forms.alert(
+            "{} was not found and has been created:\n\n{}\n\n"
+            "Please review and edit it, then re-run this tool.".format(
+                title, user_path
+            ),
+            exitscript=True
+        )
+
+ensure_user_csv(TEMPLATE_RECIPES, USER_RECIPES, "Recipes CSV")
+ensure_user_csv(TEMPLATE_UNIT_COSTS, USER_UNIT_COSTS, "Material unit cost CSV")
 
 # ------------------------------------------------------------
-# CATEGORY → UNIT MAP
+# CATEGORY -> UNIT MAP
 # ------------------------------------------------------------
 
 CATEGORY_UNIT_MAP = {
@@ -119,9 +139,7 @@ def normalize(text):
     return text.lower().strip() if text else ""
 
 def norm_key(text):
-    if not text:
-        return ""
-    return text.lower().replace(" ", "").replace("-", "").replace("_", "")
+    return normalize(text).replace(" ", "").replace("-", "").replace("_", "")
 
 def get_bic(elem):
     try:
@@ -216,7 +234,7 @@ output.print_md("Stage 2: Matching recipes")
 
 recipes = defaultdict(list)
 
-with open(RECIPES_CSV, "rb") as f:
+with open(USER_RECIPES, "rb") as f:
     text = f.read().replace(b"\x00", b"").decode("utf-8", "ignore")
 
 for r in csv.DictReader(text.splitlines()):
@@ -237,14 +255,14 @@ for fam, data in model_data.items():
 output.print_md("Stage 2 complete")
 
 # ------------------------------------------------------------
-# STAGE 3 — RESOLVE UNIT COSTS (FIXED PATH)
+# STAGE 3 — RESOLVE UNIT COSTS
 # ------------------------------------------------------------
 
 output.print_md("Stage 3: Resolving unit costs")
 
 costs = {}
 
-with open(UNIT_COSTS_CSV, "rb") as f:
+with open(USER_UNIT_COSTS, "rb") as f:
     text = f.read().replace(b"\x00", b"").decode("utf-8", "ignore")
 
 for r in csv.DictReader(text.splitlines()):
@@ -298,7 +316,6 @@ for type_name, data in model_data.items():
         )
 
 output.print_md("Stage 4 complete")
-output.print_md("Total types: {}".format(len(grouped_materials)))
 
 # ------------------------------------------------------------
 # STAGE 5 — EXPORT GROUPED CSV
@@ -309,20 +326,19 @@ output.print_md("Stage 5: Exporting grouped material list to CSV")
 desktop = os.path.join(os.environ["USERPROFILE"], "Desktop")
 csv_path = os.path.join(desktop, "Material_List_Grouped.csv")
 
-with open(csv_path, "wb") as f:
+with open(csv_path, "w") as f:
     for type_name, components in sorted(grouped_materials.items()):
         f.write("{}\n".format(type_name))
         f.write("Material,UoM,Total Quantity,Unit Cost,Total Cost\n")
 
         for material, data in sorted(components.items()):
-            line = "{},{},{:.3f},{:.2f},{:.2f}\n".format(
+            f.write("{},{},{:.3f},{:.2f},{:.2f}\n".format(
                 material.replace(",", " "),
                 data["uom"],
                 data["total_qty"],
                 data["unit_cost"],
                 data["total_cost"]
-            )
-            f.write(line)
+            ))
 
         f.write("\n")
 
