@@ -3,7 +3,12 @@ import os
 import csv
 import traceback
 from pyrevit import revit, DB, forms
-from Autodesk.Revit.DB.Architecture import RailingType  # ✅ REQUIRED FOR RAILINGS
+
+# ✅ VALID RAILING CLASSES (Revit 2023 SAFE)
+from Autodesk.Revit.DB.Architecture import (
+    RailingType,
+    HandRailType
+)
 
 doc = revit.doc
 
@@ -93,7 +98,7 @@ with open(material_costs_csv, "r") as f:
 loaded_files.append(os.path.basename(material_costs_csv))
 
 # ---------------------------------------------------------------------
-# Load recipes
+# Load recipes (UNCHANGED)
 # ---------------------------------------------------------------------
 recipes = {}
 
@@ -204,15 +209,19 @@ for cat in CATEGORIES:
         continue
 
 # ---------------------------------------------------------------------
-# ✅ RAILING FIX (ADDED, NOTHING ELSE CHANGED)
+# ✅ RAILING SYSTEM + HANDRAIL TYPES (FIXED)
 # ---------------------------------------------------------------------
 try:
-    railing_types = (
+    type_elements.extend(
         DB.FilteredElementCollector(doc)
         .OfClass(RailingType)
         .ToElements()
     )
-    type_elements.extend(railing_types)
+    type_elements.extend(
+        DB.FilteredElementCollector(doc)
+        .OfClass(HandRailType)
+        .ToElements()
+    )
 except:
     pass
 

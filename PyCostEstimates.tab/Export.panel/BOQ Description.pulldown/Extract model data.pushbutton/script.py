@@ -26,6 +26,11 @@ ALLOWED_CAT_IDS = {
     int(BuiltInCategory.OST_ElectricalEquipment),
     int(BuiltInCategory.OST_ElectricalFixtures),
     int(BuiltInCategory.OST_GenericModel),
+
+    # ✅ ADDED (VERTICAL CIRCULATION)
+    int(BuiltInCategory.OST_Stairs),
+    int(BuiltInCategory.OST_Ramps),
+    int(BuiltInCategory.OST_Railings),
 }
 
 # ---------------------------------------

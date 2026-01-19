@@ -17,13 +17,15 @@ Plumbing Fixtures,20 mm Flush Valve,
 Plumbing Fixtures,400x400x150mm,Small corner sink of dimensions indicated above
 Plumbing Fixtures,660x560x120mm,
 Plumbing Fixtures,Toilet Cistern (Ceramic) - 9 Litres,
+Ramps,Ramp 1,
+Stairs,Staircase,
 Structural Columns,300 x 300mm,
 Structural Columns,L50x50x5,
-Structural Foundations,Concrete_slab_100mm,"Reinforced in-situ concrete slab, Grade C25, reinforced with Conforce 257 mesh including laps and joints, with formwork to edges, damp-proof membrane and anti-guard membrane turned up 50 mm, complete, compacted by vibration and cured to BS EN 206 / BS 8500."
+Structural Foundations,Concrete slab 100mm,"Reinforced in-situ concrete slab, Grade C25, reinforced with Conforce 257 mesh including laps and joints, with formwork to edges, damp-proof membrane and anti-guard membrane turned up 50 mm, complete, compacted by vibration and cured to BS EN 206 / BS 8500."
 Structural Foundations,Pad footing 1200x1200x300mm thick,"Provide and place in-situ reinforced concrete pad footings, C25/30 (GEN3), in accordance with BS EN 206 and BS 8500, in prepared foundation pits, including all labour, materials, plant, placing, compaction, finishing, curing and protection, complete.
-Reinforcement: refer to Structural Engineer’s drawings for bar sizes, shapes, lengths and spacing.
-"
-Structural Foundations,Strip footing 600x200mm thick,"Reinforcement: refer to Structural Engineer’s drawings for bar sizes, shapes, lengths and spacing."
+Reinforcement: refer to Structural Engineers drawings for bar sizes, shapes, lengths and spacing.
+Reinforcement: refer to Structural Engineers drawings for bar sizes, shapes, lengths and spacing."
+Structural Foundations,Strip footing 600x200mm thick,"In-situ concrete strip footing, Grade C25, including mixing, placing, vibration, finishing and curing, complete, to BS EN 206 / BS 8500."
 Structural Framing,L20x20x3,
 Structural Framing,Reinforced Concrete Ring Beam_100x200mm,
 Structural Framing,Timber - Sawn softwood 50 x 50mm,
