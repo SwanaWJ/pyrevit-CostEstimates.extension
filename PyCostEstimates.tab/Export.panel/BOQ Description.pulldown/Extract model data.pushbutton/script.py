@@ -81,23 +81,22 @@ for type_id in used_type_ids:
     type_comments = comment_param.AsString() if comment_param else ""
 
     rows.append([
-        cat.Id.IntegerValue,
         cat.Name,
         type_name,
         type_comments or ""
     ])
 
 # ---------------------------------------
-# SORT → NUMERIC THEN A–Z
+# SORT → CATEGORY A–Z, THEN TYPE A–Z
 # ---------------------------------------
-rows.sort(key=lambda r: (r[0], r[1].lower(), r[2].lower()))
+rows.sort(key=lambda r: (r[0].lower(), r[1].lower()))
 
 # ---------------------------------------
 # WRITE CSV (OVERWRITE INTENTIONALLY)
 # ---------------------------------------
 with codecs.open(output_path, "w", encoding="utf-8") as f:
     writer = csv.writer(f)
-    writer.writerow(["Category ID", "Category", "Type", "Type Comments"])
+    writer.writerow(["Category", "Type", "Type Comments"])
     writer.writerows(rows)
 
 print("CSV created successfully")
