@@ -3,6 +3,7 @@ import os
 import csv
 import traceback
 from pyrevit import revit, DB, forms
+from Autodesk.Revit.DB.Architecture import RailingType  # ✅ REQUIRED FOR RAILINGS
 
 doc = revit.doc
 
@@ -38,7 +39,7 @@ cost_column = "{}_{}_UnitCost".format(province, cost_basis)
 national_column = "National_{}_UnitCost".format(cost_basis)
 
 # ---------------------------------------------------------------------
-# Paths (FIXED: single CSV, no folder)
+# Paths
 # ---------------------------------------------------------------------
 script_dir = os.path.dirname(__file__)
 material_costs_csv = os.path.join(script_dir, "material_unit_costs.csv")
@@ -61,7 +62,7 @@ def is_valid_cost(value):
         return False
 
 # ---------------------------------------------------------------------
-# Load material prices (Province → National fallback)
+# Load material prices
 # ---------------------------------------------------------------------
 material_prices = {}
 material_price_source = {}
@@ -92,7 +93,7 @@ with open(material_costs_csv, "r") as f:
 loaded_files.append(os.path.basename(material_costs_csv))
 
 # ---------------------------------------------------------------------
-# Load recipes (UNCHANGED)
+# Load recipes
 # ---------------------------------------------------------------------
 recipes = {}
 
@@ -162,7 +163,7 @@ with open(recipes_csv, "r") as f:
             continue
 
 # ---------------------------------------------------------------------
-# Categories (UNCHANGED except additions)
+# Categories (UNCHANGED)
 # ---------------------------------------------------------------------
 CATEGORIES = [
     DB.BuiltInCategory.OST_Walls,
@@ -185,13 +186,10 @@ CATEGORIES = [
     DB.BuiltInCategory.OST_PipeAccessory,
     DB.BuiltInCategory.OST_GenericModel,
     DB.BuiltInCategory.OST_SpecialityEquipment,
-
-    # ✅ ADDED
     DB.BuiltInCategory.OST_Stairs,
     DB.BuiltInCategory.OST_Ramps,
     DB.BuiltInCategory.OST_Railings,
 ]
-
 
 type_elements = []
 for cat in CATEGORIES:
@@ -204,6 +202,19 @@ for cat in CATEGORIES:
         )
     except:
         continue
+
+# ---------------------------------------------------------------------
+# ✅ RAILING FIX (ADDED, NOTHING ELSE CHANGED)
+# ---------------------------------------------------------------------
+try:
+    railing_types = (
+        DB.FilteredElementCollector(doc)
+        .OfClass(RailingType)
+        .ToElements()
+    )
+    type_elements.extend(railing_types)
+except:
+    pass
 
 materials = list(DB.FilteredElementCollector(doc).OfClass(DB.Material))
 
@@ -223,7 +234,7 @@ overhead_applied = {}
 national_fallback_used = {}
 
 # ---------------------------------------------------------------------
-# TRANSACTION (RESTORED)
+# TRANSACTION (UNCHANGED)
 # ---------------------------------------------------------------------
 try:
     with revit.Transaction(
@@ -303,7 +314,6 @@ try:
             wastage_applied[tname] = wastage_cost > 0
             overhead_applied[tname] = overhead_cost > 0
 
-        # Paint / finishes
         for mat in materials:
             if mat.Name in material_prices:
                 p = mat.LookupParameter("Cost")
