@@ -14,7 +14,7 @@ csv_path = os.path.normpath(os.path.join(
     script_dir,
     "..",  # back to BOQ Description.pulldown
     "Extract model data.pushbutton",
-    "FamilyTypes_With_Comments.csv"
+    "USED_TYPES_ONLY.csv"
 ))
 
 # --------------------------------------------------
