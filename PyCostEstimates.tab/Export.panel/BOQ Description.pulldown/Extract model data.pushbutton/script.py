@@ -22,12 +22,26 @@ ALLOWED_CAT_IDS = {
     int(BuiltInCategory.OST_StructuralFoundation),
     int(BuiltInCategory.OST_Doors),
     int(BuiltInCategory.OST_Windows),
+
+    # Plumbing
     int(BuiltInCategory.OST_PlumbingFixtures),
-    int(BuiltInCategory.OST_MechanicalEquipment),
-    int(BuiltInCategory.OST_ElectricalEquipment),
+    int(BuiltInCategory.OST_PipeCurves),
+    int(BuiltInCategory.OST_PipeFitting),
+    int(BuiltInCategory.OST_PipeAccessory),
+
+    # Electrical
+    int(BuiltInCategory.OST_Conduit),
+    int(BuiltInCategory.OST_ConduitFitting),
     int(BuiltInCategory.OST_ElectricalFixtures),
+    int(BuiltInCategory.OST_ElectricalEquipment),
+    int(BuiltInCategory.OST_LightingFixtures),
+    int(BuiltInCategory.OST_LightingDevices),
+
+    # Mechanical / Generic
+    int(BuiltInCategory.OST_MechanicalEquipment),
     int(BuiltInCategory.OST_GenericModel),
 
+    # Architectural / Site
     int(BuiltInCategory.OST_Stairs),
     int(BuiltInCategory.OST_Ramps),
     int(BuiltInCategory.OST_Railings),
