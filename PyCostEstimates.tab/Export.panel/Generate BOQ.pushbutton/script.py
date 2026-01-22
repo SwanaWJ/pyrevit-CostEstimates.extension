@@ -1649,6 +1649,31 @@ for cat_name in CATEGORY_ORDER:
                     elif len_prm and len_prm.HasValue:
                         qty  = len_prm.AsDouble() * FT_TO_M
                         unit = "m"
+            # ----------------------------------------------------------
+            # FIX: Plumbing & Electrical
+            # - Pipes & Conduits → length in metres (m)
+            # - Fittings / Fixtures → remain as No.
+            # ----------------------------------------------------------
+            elif cat_name in ("Plumbing", "Electrical"):
+
+                # Only linear MEP elements (Pipe, Conduit)
+                if isinstance(el, DB.MEPCurve):
+
+                    length_param = el.get_Parameter(
+                        DB.BuiltInParameter.CURVE_ELEM_LENGTH
+                    )
+
+                    if length_param and length_param.HasValue:
+                        qty = length_param.AsDouble() * FT_TO_M
+                        unit = "m"
+                    else:
+                        qty = 0.0
+                        unit = "m"
+
+                else:
+                    # Fittings, fixtures, accessories → count
+                    qty = 1.0
+                    unit = "No."
 
             comment = ""
             if el_type:

@@ -377,7 +377,7 @@ PVC Ceiling,Ceiling - PVC Ceiling,,,,,1,,,,,,,,,
 ,,,,,,,,,,,,,,,
 Window,,,,,,,,,,,,,,,
 ,,,,,,,,,,,,,,,
-Glass - 4mm thick clear glass,Glass - 4mm thick clear glass,,,,,1,,,,,,,,,
+Glass - 4mm thick clear glass,"Glass - 4mm thick clear glass",,,,,1,,,,,,,,,
 Glass - 4mm thick clear glass,Window Putty,,,,,,,,,,,,,,
 ,,,,,,,,,,,,,,,
 Glass - 4mm thick obscure glass,Glass - 4mm thick obscure glass,,,,,1,,,,,,,,,
@@ -437,3 +437,8 @@ Staircase ,Fire Extinguisher - 6 litre Water (H20),,,,,,,,,,,,,,
 Ramp 1,Fire Extinguisher - 6 litre Water (H20),,,,,,,,,,,,,,
 ,,,,,,,,,,,,,,,
 RR,Fire Extinguisher - 6 litre Water (H20),,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+Complex door family,"Door - 825 x 1960 x44mm Thick MukwaDoor",,,,,,,,,,,,,,
+Complex door family,"Steel door frame 900 x2000 mm complete with grill door",,,,,,,,,,,,,,
+Complex door family,"Three lever mortice doorlockset",,,,,,,,,,,,,,
