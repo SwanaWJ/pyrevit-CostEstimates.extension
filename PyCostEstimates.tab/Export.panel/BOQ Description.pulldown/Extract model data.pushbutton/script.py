@@ -6,7 +6,7 @@ import codecs
 
 from Autodesk.Revit.DB import *
 from Autodesk.Revit.DB.Architecture import RailingType
-from pyrevit import revit
+from pyrevit import revit, forms
 
 doc = revit.doc
 
@@ -120,6 +120,13 @@ with codecs.open(output_path, "w", encoding="utf-8") as f:
     writer.writerow(["Category", "Type", "Type Comments"])
     writer.writerows(rows)
 
-print("CSV created successfully")
-print("File:", output_path)
-print("Used types exported:", len(rows))
+# ---------------------------------------
+# USER FEEDBACK (UI)
+# ---------------------------------------
+forms.alert(
+    "Used types export complete\n\n"
+    "• Types exported: {}\n"
+    "• File saved to:\n{}".format(len(rows), output_path),
+    title="BOQ · Used Types Export",
+    ok=True
+)
