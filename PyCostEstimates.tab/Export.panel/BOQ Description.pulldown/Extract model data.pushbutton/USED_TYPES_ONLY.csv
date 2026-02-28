@@ -1,13 +1,16 @@
 Category,Type,Type Comments
+Conduit Fittings,Plain conduit elbow,
 Conduit Fittings,Standard,
 Conduits,Conduit,
-Doors,Complex door family,
-Doors,Door - 825 x 1960 x 44mm Thick Mukwa Door,
-Doors,Double Reabat door frame,
-Doors,Three lever mortice door lockset,
+Doors,Complex door family,"Plain conduit elbow, to BS 4568 / BS EN 61386, manufactured in steel or PVC as specified, suitable for changing direction of electrical conduits, complete with smooth radius bend, jointing, fixings, alignment, continuity of earthing (where applicable), and installation, fixed complete in position."
+Doors,Door - 825 x 1960 x 44mm Thick Mukwa Door,h6yntrntrynyhergg
+Doors,Door stopper,
+Doors,Double Reabat door frame,"Double rebate door frame, manufactured from timber / pressed steel (as specified), suitable for double-leaf or rebated door installation, complete with double rebates to receive door leaves, including fixing lugs, anchors, stops, seal grooves (where required), ironmongery preparations, fixings, alignment, making good to reveals, and installed complete in position in accordance with BS 8214 / BS EN 14351-1."
+Doors,Three lever mortice door lockset,"Three-lever mortice lock, conforming to BS 3621 / BS EN 12209 (as applicable), complete with lock case, levers, deadbolt, strike plate, keys, escutcheons and fixings, morticed into door leaf, including cutting, fitting, alignment, testing and making good, installed complete and operational."
+Electrical Fixtures,Standard,
 Lighting Devices,Two Way Switch,
 Lighting Fixtures,100W - 230V,
-Pipe Accessories,Gate valve - 13mm (½ inch) - PVC,
+Pipe Accessories,Gate valve - 13mm (½ inch) - PVC,iujhimuhrgtviuhvgtuivgrugtrvugrvugrvuvgtrbu
 Pipe Fittings,PVC Plain bend  110mm,
 Pipe Fittings,Standard,
 Pipe Fittings,Standard,
@@ -16,10 +19,9 @@ Pipes,Default,
 Pipes,Waste pipe (PVC) - 50mm diameter,
 Plumbing Fixtures,125 mm Strainer - 50 mm Drain,
 Plumbing Fixtures,610 mm,
-Plumbing Fixtures,Private - 6.1 Lpf,
+Plumbing Fixtures,Private - 6.1 Lpf,"Close-coupled toilet pan, vitreous china, complete with 1.6-litre dual-flush cistern, pan connector, flush mechanism, seat and cover, isolating valve, fixing bolts and all accessories, installed complete with connections to water supply and soil pipe, including testing and commissioning, in accordance with BS EN 997."
 Railings,1100mm,
 Roofs,IBR_0.4mm thick,
-Roofs,Ridge cap,
 Structural Columns,150 x 150mm,
 Structural Columns,300 x 300mm,
 Structural Columns,RHS100x50x3.2,
@@ -27,11 +29,13 @@ Structural Foundations,Bearing Footing - 600 mm x 150 mm,
 Structural Foundations,C25 Concrete,
 Structural Foundations,Foundation walls_150mm,
 Structural Foundations,Pad footing 1000x1000x200mm thick,
-Structural Framing,200mm x 150mm,
+Structural Framing,200mm x 150mm,"Hollow rectangular steel tubes, manufactured from mild steel to BS EN 10219 / BS EN 10025, cut to required lengths and welded to form roof rafters, including fabrication, welding, drilling, lifting, erection, alignment, connections, fixing to supporting structure, and application of primer or protective coating as specified, installed complete in position."
 Structural Framing,RHS100x50x3.2,
-Structural Framing,Sawn Timber 50x50mm,TEST RUN
+Structural Framing,Sawn Timber 50x50mm,"Ceiling brandering, comprising rough sawn timber brandering members, fixed to soffit of slab / roof structure to receive ceiling boards, including all hangers, noggings, packing, levelling, fixing, trimming, cutting and waste, set out true to line and level, complete and ready to receive ceiling finishes, in accordance with BS 8212 / BS 8000."
 Walls,Generic - 150mm,
-Walls,Wall skirting 100mm high,
+Walls,Wall skirting 100mm high,"In-situ concrete wall skirting, formed at base of walls, of approved mix, including setting out, formwork, placing, compaction, finishing to smooth trowelled finish, forming neat arrises, joints and returns, including curing, making good and cleaning down, complete in position in accordance with BS EN 206 / BS 8500."
 Windows,2400 mm x 1200 mm,"Aluminium framed window, powder-coated finish, glazed and installed complete to BS EN 14351-1 and BS 8213-4, including ironmongery, sealing, fixings, and making good."
-Windows,500x600,
-Windows,600 x 600,Included in BOQ
+Windows,500x600,"Pressed steel window frames, manufactured from galvanised mild steel sections, factory-pressed and welded, suitable for glazing as specified, including fixing lugs, anchors, built-in holdfasts, glazing rebates, corrosion protection, primer finish, fixing into masonry or concrete openings, alignment, levelling, making good to reveals, and preparation for glazing, installed complete in position, in accordance with BS EN 14351-1."
+Windows,600 x 600,"Pressed steel window frames, manufactured from galvanised mild steel sections, factory-pressed and welded, suitable for glazing as specified, including fixing lugs, anchors, built-in holdfasts, glazing rebates, corrosion protection, primer finish, fixing into masonry or concrete openings, alignment, levelling, making good to reveals, and preparation for glazing, installed complete in position, in accordance with BS EN 14351-1."
+Windows,Air Vent,
+Windows,PVC air vents pair,"PVC air vents, fitted above windows to provide natural ventilation, manufactured from durable UV-stabilised PVC, including vent grille, sleeve through wall, insect mesh, fixings, sealants, cutting and forming openings, installation, alignment and making good to surrounding finishes, installed complete in position in accordance with relevant BS / EN standards."

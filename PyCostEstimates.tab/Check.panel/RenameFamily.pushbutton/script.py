@@ -91,10 +91,29 @@ SUPPORTED_CATEGORIES = {
     BuiltInCategory.OST_Walls,
     BuiltInCategory.OST_Floors,
     BuiltInCategory.OST_Roofs,
+    BuiltInCategory.OST_Ceilings,
+    BuiltInCategory.OST_Doors,
+    BuiltInCategory.OST_Windows,
+    BuiltInCategory.OST_StructuralColumns,
+    BuiltInCategory.OST_StructuralFraming,
     BuiltInCategory.OST_StructuralFoundation,
-    BuiltInCategory.OST_Fascia,
-    BuiltInCategory.OST_Gutter,
-    BuiltInCategory.OST_RoofSoffit
+    BuiltInCategory.OST_Rebar,
+    BuiltInCategory.OST_Conduit,
+    BuiltInCategory.OST_ElectricalFixtures,
+    BuiltInCategory.OST_ElectricalEquipment,
+    BuiltInCategory.OST_LightingFixtures,
+    BuiltInCategory.OST_LightingDevices,
+    BuiltInCategory.OST_PlumbingFixtures,
+    BuiltInCategory.OST_PipeCurves,
+    BuiltInCategory.OST_PipeFitting,
+    BuiltInCategory.OST_PipeAccessory,
+    BuiltInCategory.OST_GenericModel,
+    BuiltInCategory.OST_SpecialityEquipment,
+    BuiltInCategory.OST_Stairs,
+    BuiltInCategory.OST_Ramps,
+    BuiltInCategory.OST_Railings,
+
+
 }
 
 def get_type_name(t):

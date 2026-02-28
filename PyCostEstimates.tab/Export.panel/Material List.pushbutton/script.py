@@ -1,12 +1,15 @@
 # -*- coding: utf-8 -*-
 
 """
-Material List Tool - FINAL (Fixed)
-Stage 1: Extract Revit quantities
-Stage 2: Match recipes.csv (Type -> Component)
-Stage 3: Resolve unit costs (Item)
-Stage 4: Calculate quantities GROUPED BY TYPE
-Stage 5: Export grouped CSV (QS format)
+Material List Tool - FINAL
+✔ All categories
+✔ Recipes from Apply Rate
+✔ Province → National fallback
+✔ Guaranteed UoM
+✔ Family subtotals
+✔ Unit Cost Source column
+✔ Percentage contribution column
+✔ IronPython-safe formatting
 """
 
 # ------------------------------------------------------------
@@ -32,7 +35,7 @@ choices = ["{} - {}".format(p, c) for p in provinces for c in cost_types]
 
 selection = forms.ask_for_one_item(
     choices,
-    default="Central - Avg",
+    default="Copperbelt - Avg",
     title="Select Province and Cost Type"
 )
 
@@ -40,11 +43,14 @@ if not selection:
     script.exit()
 
 province, cost_type = [x.strip() for x in selection.split("-")]
-cost_column = "{}_{}_UnitCost".format(province, cost_type)
 
-output.print_md("Pricing context selected")
+PROV_COST_COL = "{}_{}_UnitCost".format(province, cost_type)
+NAT_COST_COL  = "National_{}_UnitCost".format(cost_type)
+
+output.print_md("Pricing context")
 output.print_md("- Province: {}".format(province))
 output.print_md("- Cost type: {}".format(cost_type))
+output.print_md("- Fallback: {}".format(NAT_COST_COL))
 
 # ------------------------------------------------------------
 # IMPORTS
@@ -54,57 +60,24 @@ from Autodesk.Revit.DB import *
 import System
 import os
 import csv
-import shutil
+import codecs
 from collections import defaultdict
 
 doc = __revit__.ActiveUIDocument.Document
 
 # ------------------------------------------------------------
-# PATHS (FIXED + FIRST-RUN SAFE)
+# APPLY RATE LOCATION
 # ------------------------------------------------------------
 
-# Folder where THIS button script lives
 SCRIPT_DIR = os.path.dirname(__file__)
+TAB_DIR = os.path.dirname(os.path.dirname(SCRIPT_DIR))
+APPLY_RATES_DIR = os.path.join(TAB_DIR, "Update.panel", "Apply Rate.pushbutton")
 
-# Template CSVs shipped with the button
-TEMPLATE_RECIPES = os.path.join(SCRIPT_DIR, "recipes.csv")
-TEMPLATE_UNIT_COSTS = os.path.join(SCRIPT_DIR, "material_unit_costs.csv")
-
-# User-writable location
-USER_ROOT = os.path.join(
-    os.path.expanduser("~"),
-    "Documents",
-    "PyCostEstimates"
-)
-
-USER_RECIPES = os.path.join(USER_ROOT, "recipes.csv")
-USER_UNIT_COSTS = os.path.join(USER_ROOT, "material_unit_costs.csv")
-
-def ensure_user_csv(template_path, user_path, title):
-    if not os.path.exists(template_path):
-        forms.alert(
-            "{} template is missing:\n{}".format(title, template_path),
-            exitscript=True
-        )
-
-    if not os.path.exists(USER_ROOT):
-        os.makedirs(USER_ROOT)
-
-    if not os.path.exists(user_path):
-        shutil.copy(template_path, user_path)
-        forms.alert(
-            "{} was not found and has been created:\n\n{}\n\n"
-            "Please review and edit it, then re-run this tool.".format(
-                title, user_path
-            ),
-            exitscript=True
-        )
-
-ensure_user_csv(TEMPLATE_RECIPES, USER_RECIPES, "Recipes CSV")
-ensure_user_csv(TEMPLATE_UNIT_COSTS, USER_UNIT_COSTS, "Material unit cost CSV")
+RECIPES_CSV = os.path.join(APPLY_RATES_DIR, "recipes.csv")
+UNIT_COSTS_CSV = os.path.join(APPLY_RATES_DIR, "material_unit_costs.csv")
 
 # ------------------------------------------------------------
-# CATEGORY -> UNIT MAP
+# CATEGORY → UNIT MAP
 # ------------------------------------------------------------
 
 CATEGORY_UNIT_MAP = {
@@ -117,15 +90,16 @@ CATEGORY_UNIT_MAP = {
     BuiltInCategory.OST_StructuralColumns: "m3",
     BuiltInCategory.OST_StructuralFraming: "m",
     BuiltInCategory.OST_StructuralFoundation: "m3",
+    BuiltInCategory.OST_Rebar: "m",
     BuiltInCategory.OST_Conduit: "m",
     BuiltInCategory.OST_PipeCurves: "m",
+    BuiltInCategory.OST_PipeFitting: "No",
+    BuiltInCategory.OST_PipeAccessory: "No",
+    BuiltInCategory.OST_PlumbingFixtures: "No",
     BuiltInCategory.OST_ElectricalFixtures: "No",
     BuiltInCategory.OST_ElectricalEquipment: "No",
     BuiltInCategory.OST_LightingFixtures: "No",
     BuiltInCategory.OST_LightingDevices: "No",
-    BuiltInCategory.OST_PlumbingFixtures: "No",
-    BuiltInCategory.OST_PipeFitting: "No",
-    BuiltInCategory.OST_PipeAccessory: "No",
     BuiltInCategory.OST_SpecialityEquipment: "No",
 }
 
@@ -135,18 +109,18 @@ SUPPORTED_BICS = set(CATEGORY_UNIT_MAP.keys())
 # HELPERS
 # ------------------------------------------------------------
 
-def normalize(text):
-    return text.lower().strip() if text else ""
-
 def norm_key(text):
-    return normalize(text).replace(" ", "").replace("-", "").replace("_", "")
+    return text.lower().strip().replace(" ", "").replace("_", "").replace("-", "") if text else ""
+
+def safe_float(val):
+    try:
+        return float(val)
+    except:
+        return 0.0
 
 def get_bic(elem):
     try:
-        return System.Enum.Parse(
-            BuiltInCategory,
-            str(elem.Category.Id.IntegerValue)
-        )
+        return System.Enum.Parse(BuiltInCategory, str(elem.Category.Id.IntegerValue))
     except:
         return None
 
@@ -171,6 +145,14 @@ def get_raw_quantity(elem, bic):
         p = elem.get_Parameter(BuiltInParameter.CURVE_ELEM_LENGTH)
         return p.AsDouble() if p else 0.0
 
+    if bic == BuiltInCategory.OST_Rebar:
+        p = elem.LookupParameter("Total Bar Length")
+        if p and p.AsDouble() > 0:
+            return p.AsDouble()
+
+        p = elem.get_Parameter(BuiltInParameter.REBAR_ELEM_LENGTH)
+        return p.AsDouble() if p else 0.0
+
     return 1.0
 
 # ------------------------------------------------------------
@@ -180,7 +162,6 @@ def get_raw_quantity(elem, bic):
 output.print_md("Stage 1: Extracting model quantities")
 
 model_data = {}
-
 elements = FilteredElementCollector(doc).WhereElementIsNotElementType().ToElements()
 
 for elem in elements:
@@ -224,8 +205,6 @@ for d in model_data.values():
     else:
         d["revit_quantity"] = d["raw_qty"]
 
-output.print_md("Stage 1 complete")
-
 # ------------------------------------------------------------
 # STAGE 2 — MATCH RECIPES
 # ------------------------------------------------------------
@@ -234,25 +213,19 @@ output.print_md("Stage 2: Matching recipes")
 
 recipes = defaultdict(list)
 
-with open(USER_RECIPES, "rb") as f:
+with open(RECIPES_CSV, "rb") as f:
     text = f.read().replace(b"\x00", b"").decode("utf-8", "ignore")
 
 for r in csv.DictReader(text.splitlines()):
-    try:
-        recipes[normalize(r["Type"])].append(
-            (r["Component"].strip(), float(r["Quantity"]))
-        )
-    except:
-        pass
+    recipes[norm_key(r["Type"])].append(
+        (r["Component"], safe_float(r["Quantity"]))
+    )
 
 for fam, data in model_data.items():
-    fam_key = normalize(fam)
-    for recipe_type, comps in recipes.items():
-        if recipe_type in fam_key:
-            for comp, qty in comps:
-                data["components"][comp] = {"recipe_qty": qty}
-
-output.print_md("Stage 2 complete")
+    key = norm_key(fam)
+    if key in recipes:
+        for comp, qty in recipes[key]:
+            data["components"][comp] = {"recipe_qty": qty}
 
 # ------------------------------------------------------------
 # STAGE 3 — RESOLVE UNIT COSTS
@@ -262,85 +235,84 @@ output.print_md("Stage 3: Resolving unit costs")
 
 costs = {}
 
-with open(USER_UNIT_COSTS, "rb") as f:
+with open(UNIT_COSTS_CSV, "rb") as f:
     text = f.read().replace(b"\x00", b"").decode("utf-8", "ignore")
 
 for r in csv.DictReader(text.splitlines()):
-    try:
-        name = r.get("Item")
-        if not name:
-            continue
-        costs[norm_key(name)] = {
-            "uom": r["UoM"],
-            "unit_cost": float(r[cost_column])
-        }
-    except:
-        pass
+    item = norm_key(r.get("Item"))
+    uom = r.get("UoM", "")
+
+    prov = safe_float(r.get(PROV_COST_COL))
+    nat  = safe_float(r.get(NAT_COST_COL))
+
+    if prov > 0:
+        costs[item] = (prov, PROV_COST_COL, uom)
+    elif nat > 0:
+        costs[item] = (nat, NAT_COST_COL, uom)
 
 for data in model_data.values():
     for comp, info in data["components"].items():
-        key = norm_key(comp)
-        if key in costs:
-            info.update(costs[key])
-
-output.print_md("Stage 3 complete")
+        k = norm_key(comp)
+        if k in costs:
+            cost, src, uom = costs[k]
+            info.update({
+                "unit_cost": cost,
+                "cost_source": src,
+                "uom": uom
+            })
 
 # ------------------------------------------------------------
-# STAGE 4 — FINAL QUANTITIES (GROUPED BY TYPE)
+# STAGE 4 — FINAL QUANTITIES
 # ------------------------------------------------------------
-
-output.print_md("Stage 4: Calculating final quantities (grouped by type)")
 
 grouped_materials = {}
 
-for type_name, data in model_data.items():
+for fam, data in model_data.items():
+    grouped_materials[fam] = {}
     revit_qty = data["revit_quantity"]
-    if revit_qty <= 0 or not data["components"]:
-        continue
-
-    grouped_materials.setdefault(type_name, {})
 
     for comp, info in data["components"].items():
-        final_qty = revit_qty * info.get("recipe_qty", 0.0)
+        qty = revit_qty * info["recipe_qty"]
+        cost = qty * info.get("unit_cost", 0)
 
-        grouped_materials[type_name].setdefault(comp, {
+        grouped_materials[fam][comp] = {
             "uom": info.get("uom", ""),
-            "total_qty": 0.0,
-            "unit_cost": info.get("unit_cost", 0.0),
-            "total_cost": 0.0
-        })
-
-        grouped_materials[type_name][comp]["total_qty"] += final_qty
-        grouped_materials[type_name][comp]["total_cost"] += (
-            final_qty * info.get("unit_cost", 0.0)
-        )
-
-output.print_md("Stage 4 complete")
+            "qty": qty,
+            "unit_cost": info.get("unit_cost", 0),
+            "total_cost": cost,
+            "cost_source": info.get("cost_source", "")
+        }
 
 # ------------------------------------------------------------
-# STAGE 5 — EXPORT GROUPED CSV
+# STAGE 5 — EXPORT CSV (UTF-8 SAFE)
 # ------------------------------------------------------------
 
-output.print_md("Stage 5: Exporting grouped material list to CSV")
+output.print_md("Stage 5: Exporting CSV")
 
 desktop = os.path.join(os.environ["USERPROFILE"], "Desktop")
 csv_path = os.path.join(desktop, "Material_List_Grouped.csv")
 
-with open(csv_path, "w") as f:
-    for type_name, components in sorted(grouped_materials.items()):
-        f.write("{}\n".format(type_name))
-        f.write("Material,UoM,Total Quantity,Unit Cost,Total Cost\n")
+with codecs.open(csv_path, "w", encoding="utf-8") as f:
+    for fam, comps in grouped_materials.items():
+        f.write(u"{}\n".format(fam))
+        f.write(u"Material,UoM,Total Quantity,Unit Cost,Total Cost,Unit Cost Source,Percentage\n")
 
-        for material, data in sorted(components.items()):
-            f.write("{},{},{:.3f},{:.2f},{:.2f}\n".format(
-                material.replace(",", " "),
-                data["uom"],
-                data["total_qty"],
-                data["unit_cost"],
-                data["total_cost"]
+        subtotal = sum(c["total_cost"] for c in comps.values())
+
+        for mat, d in comps.items():
+            pct = float(d["total_cost"] / subtotal * 100) if subtotal else 0.0
+
+            f.write(u"{},{},{:.3f},{:.2f},{:.2f},{},{:.0f}%\n".format(
+                mat.replace(",", " "),
+                d["uom"],
+                float(d["qty"]),
+                float(d["unit_cost"]),
+                float(d["total_cost"]),
+                d["cost_source"],
+                pct
             ))
 
-        f.write("\n")
+        f.write(u"Subtotal {},,,,{:.2f},,100%\n\n".format(fam, float(subtotal)))
 
 output.print_md("CSV export complete")
 output.print_md(csv_path)

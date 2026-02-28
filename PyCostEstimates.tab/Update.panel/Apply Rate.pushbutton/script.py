@@ -168,7 +168,7 @@ with open(recipes_csv, "r") as f:
             continue
 
 # ---------------------------------------------------------------------
-# Categories (UNCHANGED)
+# Categories (FIXED – STRUCTURAL REBAR ADDED)
 # ---------------------------------------------------------------------
 CATEGORIES = [
     DB.BuiltInCategory.OST_Walls,
@@ -180,6 +180,7 @@ CATEGORIES = [
     DB.BuiltInCategory.OST_StructuralColumns,
     DB.BuiltInCategory.OST_StructuralFraming,
     DB.BuiltInCategory.OST_StructuralFoundation,
+    DB.BuiltInCategory.OST_Rebar,  # ✅ STRUCTURAL REBAR (measured per metre)
     DB.BuiltInCategory.OST_Conduit,
     DB.BuiltInCategory.OST_ElectricalFixtures,
     DB.BuiltInCategory.OST_ElectricalEquipment,
@@ -209,7 +210,7 @@ for cat in CATEGORIES:
         continue
 
 # ---------------------------------------------------------------------
-# ✅ RAILING SYSTEM + HANDRAIL TYPES (FIXED)
+# ✅ RAILING SYSTEM + HANDRAIL TYPES (UNCHANGED)
 # ---------------------------------------------------------------------
 try:
     type_elements.extend(
@@ -362,12 +363,12 @@ if updated:
             fallback = " ⚠️ [{}]".format(national_fallback_used[name])
 
         label = "  " + ", ".join(labels) + fallback if labels or fallback else ""
-        summary.append("- {} : {:.2f} ZMW{}".format(name, updated[name], label))
+        summary.append("- {} : {:.2f} EUR{}".format(name, updated[name], label))
 
 if paint_updated:
     summary.append("\nUPDATED PAINT / FINISH MATERIALS:")
     for name in sorted(paint_updated):
-        summary.append("- {} : {:.2f} ZMW".format(name, paint_updated[name]))
+        summary.append("- {} : {:.2f} EUR".format(name, paint_updated[name]))
 
 if skipped:
     summary.append("\nSKIPPED TYPES:")
