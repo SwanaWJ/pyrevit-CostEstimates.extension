@@ -92,6 +92,7 @@ CATEGORY_MAP = {
 
     "Electrical": [
         DB.BuiltInCategory.OST_Conduit,
+        DB.BuiltInCategory.OST_ConduitFitting,
         DB.BuiltInCategory.OST_LightingFixtures,
         DB.BuiltInCategory.OST_LightingDevices,
         DB.BuiltInCategory.OST_ElectricalFixtures,

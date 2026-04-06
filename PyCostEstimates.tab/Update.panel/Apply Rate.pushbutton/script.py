@@ -182,6 +182,7 @@ CATEGORIES = [
     DB.BuiltInCategory.OST_StructuralFoundation,
     DB.BuiltInCategory.OST_Rebar,  # ✅ STRUCTURAL REBAR (measured per metre)
     DB.BuiltInCategory.OST_Conduit,
+    DB.BuiltInCategory.OST_ConduitFitting,
     DB.BuiltInCategory.OST_ElectricalFixtures,
     DB.BuiltInCategory.OST_ElectricalEquipment,
     DB.BuiltInCategory.OST_LightingFixtures,
